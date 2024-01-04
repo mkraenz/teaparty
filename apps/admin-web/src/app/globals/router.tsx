@@ -1,16 +1,16 @@
 import { AuthenticatedApp, LoginPage } from '@teaparty/react-firebase-auth';
-import { Layout } from '@teaparty/shared-ui';
 import { Outlet, createBrowserRouter } from 'react-router-dom';
 import Calendar from '../calendar/Calendar';
 import ErrorPage from './components/ErrorPage';
+import LayoutWrapper from './components/LayoutWrapper';
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <Layout>
+      <LayoutWrapper>
         <Outlet />
-      </Layout>
+      </LayoutWrapper>
     ),
     errorElement: <ErrorPage />,
     children: [

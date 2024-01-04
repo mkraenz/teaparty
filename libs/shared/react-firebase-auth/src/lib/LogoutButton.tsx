@@ -7,7 +7,7 @@ interface Props {
   afterSignout: () => void;
 }
 
-const LogoutButton: FC<Props> = ({ afterSignout }) => {
+export const LogoutButton: FC<Props> = ({ afterSignout }) => {
   const { loading, signOut } = useAuth();
   const { t } = useTranslation();
   const handleClick = async () => {

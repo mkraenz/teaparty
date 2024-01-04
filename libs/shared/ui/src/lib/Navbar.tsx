@@ -14,9 +14,8 @@ import {
   Stack,
   Tooltip,
   useColorModeValue,
-  useDisclosure,
 } from '@chakra-ui/react';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiBell, FiCode } from 'react-icons/fi';
@@ -33,11 +32,17 @@ const navData = [
   withDividerTop?: true;
 }[];
 
-const Navbar: FC = () => {
+export type NavbarProps = {
+  onClose: VoidFunction;
+  onOpen: VoidFunction;
+  isOpen: boolean;
+  bottom?: ReactNode;
+};
+
+const Navbar: FC<NavbarProps> = ({ onClose, onOpen, isOpen, bottom }) => {
   const { t } = useTranslation();
   const nav = useNavigate();
   const location = useLocation();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef<HTMLButtonElement>(null);
   const routeHoverBg = useColorModeValue('blue.200', 'blue.700');
   const activeRouteBg = useColorModeValue('blue.100', 'blue.800');
@@ -104,11 +109,7 @@ const Navbar: FC = () => {
             </Stack>
           </DrawerBody>
           <DrawerFooter borderTopWidth="1px">
-            <HStack>
-              {/* <ThemeToggleButton />
-              <ChangeLanguageButton />
-              <LogoutButton afterSignout={onClose} /> */}
-            </HStack>
+            <HStack>{bottom}</HStack>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

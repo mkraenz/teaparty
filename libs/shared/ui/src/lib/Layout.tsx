@@ -1,8 +1,11 @@
 import { Grid, GridItem } from '@chakra-ui/react';
 import type { FC, PropsWithChildren } from 'react';
-import Navbar from './Navbar';
+import Navbar, { NavbarProps } from './Navbar';
 
-export const Layout: FC<PropsWithChildren> = ({ children }) => {
+export const Layout: FC<PropsWithChildren & { navbarProps: NavbarProps }> = ({
+  children,
+  navbarProps,
+}) => {
   return (
     <Grid
       templateAreas={{
@@ -16,7 +19,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
       minH={'100vh'}
     >
       <GridItem area={'nav'}>
-        <Navbar />
+        <Navbar {...navbarProps} />
       </GridItem>
       <GridItem area={'main'} padding={4}>
         {children}
