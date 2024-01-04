@@ -109,5 +109,8 @@ yarn-error.log
 # testing
 /coverage
 
+# env files
+.env*
+!.env.example
 
 apps/next-door-diy-e2e/artifacts

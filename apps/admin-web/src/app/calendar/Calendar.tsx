@@ -12,6 +12,7 @@ const Calendar: FC<Props> = () => {
     <>
       <Text>{t('appName')}</Text>
       <Button onClick={() => nav('/')}>Home</Button>
+      <Button onClick={() => nav('/signin')}>Sign In</Button>
     </>
   );
 };

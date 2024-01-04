@@ -15,6 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@teaparty/react-firebase": ["libs/shared/react-firebase/src/index.ts"],
+      "@teaparty/react-firebase-auth": [
+        "libs/shared/react-firebase-auth/src/index.ts"
+      ],
       "@teaparty/shared-ui": ["libs/shared/ui/src/index.ts"]
     }
   },
