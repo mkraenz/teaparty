@@ -1,7 +1,13 @@
 import { HStack, useDisclosure } from '@chakra-ui/react';
 import { LogoutButton } from '@teaparty/react-firebase-auth';
-import { Layout } from '@teaparty/shared-ui';
+import {
+  ChangeLanguageButton,
+  Layout,
+  ThemeToggleButton,
+} from '@teaparty/shared-ui';
 import { FC, PropsWithChildren } from 'react';
+
+const languages = ['en', 'de'] as const;
 
 const LayoutWrapper: FC<PropsWithChildren> = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -13,8 +19,8 @@ const LayoutWrapper: FC<PropsWithChildren> = ({ children }) => {
         onOpen,
         bottom: (
           <HStack>
-            {/* <ThemeToggleButton />
-                  <ChangeLanguageButton /> */}
+            <ThemeToggleButton />
+            <ChangeLanguageButton activeLanguages={languages} />
             <LogoutButton afterSignout={() => undefined} />
           </HStack>
         ),
