@@ -1,6 +1,8 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { FirebaseProvider } from '@teaparty/react-firebase';
 import { AuthProvider } from '@teaparty/react-firebase-auth';
+import { FirebaseDatabaseProvider } from '@teaparty/react-firebase-database';
+import { FirebaseFunctionsProvider } from '@teaparty/react-firebase-functions';
 import { theme } from '@teaparty/shared-ui';
 import { Analytics, getAnalytics } from 'firebase/analytics';
 import { FirebaseOptions, initializeApp } from 'firebase/app';
@@ -39,11 +41,15 @@ export function App() {
     <Provider store={store}>
       <FirebaseProvider {...fbProps}>
         <AuthProvider>
-          <ChakraProvider theme={theme}>
-            <I18nextProvider i18n={i18n} defaultNS={'translation'}>
-              <RouterProvider router={router} />
-            </I18nextProvider>
-          </ChakraProvider>
+          <FirebaseDatabaseProvider>
+            <FirebaseFunctionsProvider>
+              <ChakraProvider theme={theme}>
+                <I18nextProvider i18n={i18n} defaultNS={'translation'}>
+                  <RouterProvider router={router} />
+                </I18nextProvider>
+              </ChakraProvider>
+            </FirebaseFunctionsProvider>
+          </FirebaseDatabaseProvider>
         </AuthProvider>
       </FirebaseProvider>
     </Provider>

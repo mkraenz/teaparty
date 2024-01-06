@@ -19,6 +19,12 @@
       "@teaparty/react-firebase-auth": [
         "libs/shared/react-firebase-auth/src/index.ts"
       ],
+      "@teaparty/react-firebase-database": [
+        "libs/shared/react-firebase-database/src/index.ts"
+      ],
+      "@teaparty/react-firebase-functions": [
+        "libs/shared/react-firebase-functions/src/index.ts"
+      ],
       "@teaparty/shared-ui": ["libs/shared/ui/src/index.ts"]
     }
   },
