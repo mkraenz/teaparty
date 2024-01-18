@@ -114,3 +114,6 @@ yarn-error.log
 !.env.example
 
 apps/next-door-diy-e2e/artifacts
+node_modules/
+**/node_modules/
+.nx/
