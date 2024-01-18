@@ -1,4 +1,5 @@
 import { Button, Flex, Icon, IconButton } from '@chakra-ui/react';
+import { noop } from 'lodash';
 import { FC, PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
@@ -35,35 +36,21 @@ const PageButton: FC<
   );
 };
 
-const Pagination = () => {
+const Pagination = ({ onNext = noop, onPrevious = noop }) => {
   const { t } = useTranslation();
   return (
     <Flex p={50} w="full" alignItems="center" justifyContent="center">
       <Flex>
-        <IconButton aria-label={t('Previous page')}>
-          <Icon
-            as={FiArrowLeft}
-            color="gray.700"
-            _dark={{
-              color: 'gray.200',
-            }}
-            boxSize={4}
-          />
+        <IconButton aria-label={t('Previous page')} onClick={onPrevious}>
+          <Icon as={FiArrowLeft} boxSize={7} />
         </IconButton>
         <PageButton>1</PageButton>
         <PageButton active>2</PageButton>
         <PageButton>3</PageButton>
         <PageButton>4</PageButton>
         <PageButton>5</PageButton>
-        <IconButton aria-label={t('Next page')}>
-          <Icon
-            as={FiArrowRight}
-            color="gray.700"
-            _dark={{
-              color: 'gray.200',
-            }}
-            boxSize={4}
-          />
+        <IconButton aria-label={t('Next page')} onClick={onNext}>
+          <Icon as={FiArrowRight} boxSize={7} />
         </IconButton>
       </Flex>
     </Flex>
