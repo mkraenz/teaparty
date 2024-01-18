@@ -1,8 +1,8 @@
-import { Button, Flex, Icon, IconButton } from '@chakra-ui/react';
-import { noop } from 'lodash';
-import { FC, PropsWithChildren } from 'react';
+import { Button, Flex, Icon, IconButton, chakra } from '@chakra-ui/react';
+import { noop, range } from 'lodash';
+import { FC, PropsWithChildren, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
+import { FiArrowLeft, FiArrowRight, FiMoreHorizontal } from 'react-icons/fi';
 
 const activeStyle = {
   bg: 'brand.600',
@@ -36,20 +36,58 @@ const PageButton: FC<
   );
 };
 
-const Pagination = ({ onNext = noop, onPrevious = noop }) => {
+const TheresMoreButton: FC<{ left?: boolean }> = (props) => {
+  const DoubleArrow = props.left ? FiArrowLeft : FiArrowRight;
+  const [hovered, setHovered] = useState(false);
+  return (
+    <chakra.a
+      w={8}
+      py={2}
+      onMouseOver={() => setHovered(true)}
+      onMouseOut={() => setHovered(false)}
+      cursor="pointer"
+      textAlign="center"
+    >
+      {hovered ? (
+        <Icon as={DoubleArrow} boxSize={7} cursor="pointer" />
+      ) : (
+        <Icon as={FiMoreHorizontal} boxSize={7} opacity={0.5} />
+      )}
+    </chakra.a>
+  );
+};
+
+// TODO we should keep track of the state inside the URL
+const Pagination = ({
+  onNext = noop,
+  onPrevious = noop,
+  nextDisabled = false,
+  previousDisabled = true,
+  visiblePages = 1,
+  activePageIndex = 0,
+}) => {
   const { t } = useTranslation();
   return (
     <Flex p={50} w="full" alignItems="center" justifyContent="center">
       <Flex>
-        <IconButton aria-label={t('Previous page')} onClick={onPrevious}>
+        <IconButton
+          aria-label={t('Previous page')}
+          onClick={onPrevious}
+          isDisabled={previousDisabled}
+        >
           <Icon as={FiArrowLeft} boxSize={7} />
         </IconButton>
-        <PageButton>1</PageButton>
-        <PageButton active>2</PageButton>
-        <PageButton>3</PageButton>
-        <PageButton>4</PageButton>
-        <PageButton>5</PageButton>
-        <IconButton aria-label={t('Next page')} onClick={onNext}>
+        {range(visiblePages).map((i) => (
+          <PageButton key={i} active={i === activePageIndex}>
+            {i + 1}
+          </PageButton>
+        ))}
+        <TheresMoreButton />
+        <IconButton
+          aria-label={t('Next page')}
+          onClick={onNext}
+          isDisabled={nextDisabled}
+        >
           <Icon as={FiArrowRight} boxSize={7} />
         </IconButton>
       </Flex>

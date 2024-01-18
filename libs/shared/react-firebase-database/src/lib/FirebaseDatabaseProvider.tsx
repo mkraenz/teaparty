@@ -19,7 +19,7 @@ type DatabaseState = {
   listUsers: (args?: {
     limit?: number;
     startAtCreationDate?: string | null;
-    /** end is exclusive */
+    /** end is inclusive */
     endAtCreationDate?: string | null;
   }) => Promise<User[]>;
   deleteUser: (id: string) => Promise<void>;
