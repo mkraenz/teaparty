@@ -16,7 +16,12 @@ import { User } from './database.types';
 
 type DatabaseState = {
   createUser: (user: WithoutAutogenProps<User>) => Promise<User>;
-  listUsers: () => Promise<User[]>;
+  listUsers: (args?: {
+    limit?: number;
+    startAtCreationDate?: string | null;
+    /** end is exclusive */
+    endAtCreationDate?: string | null;
+  }) => Promise<User[]>;
   deleteUser: (id: string) => Promise<void>;
   error: null | Error;
   loading: boolean;
@@ -47,23 +52,27 @@ type Deps = {
   setLoading: (val: boolean) => void;
   setError: (error: Error | null) => void;
 };
+
+type InnerFn<T> = T extends (deps: Deps) => infer R ? R : never;
 const injectDeps =
   (deps: Deps) =>
-  <U extends unknown[]>(fn: (deps: Deps) => (...args: U) => Promise<unknown>) =>
-  async (...args: U) => {
-    deps.setLoading(true);
-    try {
-      return await fn(deps)(...args);
-    } catch (error) {
-      if (error instanceof Error) deps.setError(error);
-      else
-        deps.setError(
-          new Error(typeof error === 'string' ? error : JSON.stringify(error))
-        );
-    } finally {
-      deps.setLoading(false);
-    }
-  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  <Fn extends (deps: Deps) => (...args: any) => Promise<any>>(fn: Fn) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (async (...args: any) => {
+      deps.setLoading(true);
+      try {
+        return await fn(deps)(...args);
+      } catch (error) {
+        if (error instanceof Error) deps.setError(error);
+        else
+          deps.setError(
+            new Error(typeof error === 'string' ? error : JSON.stringify(error))
+          );
+      } finally {
+        deps.setLoading(false);
+      }
+    }) as InnerFn<Fn>;
 
 const createUser_ =
   ({ db }: Pick<Deps, 'db'>) =>
@@ -83,21 +92,15 @@ const createUser_ =
   };
 
 const listUsers_ =
-  ({ db }: Pick<Deps, 'db'>) =>
+  ({ db }: Pick<Deps, 'db'>): DatabaseState['listUsers'] =>
   /** starting at creation date with null as realtime db orders its data so that null comes first. https://firebase.google.com/docs/database/web/lists-of-data#orderbychild  */
-  async (
-    { limit, startAtCreationDate, endAtCreationDate } = {
-      limit: 10,
-      startAtCreationDate: null,
-      endAtCreationDate: new Date().toISOString(),
-    }
-  ) => {
+  async ({ limit, startAtCreationDate, endAtCreationDate } = {}) => {
     const q = query(
       ref(db, userRoot),
       orderByChild('createdAt'),
-      startAt(startAtCreationDate),
-      endAt(endAtCreationDate),
-      limitToLast(limit)
+      startAt(startAtCreationDate ?? null),
+      endAt(endAtCreationDate ?? new Date().toISOString()),
+      limitToLast(limit ?? 10) // newest-first
     );
     const snapshot = await get(q);
     if (snapshot.exists()) {
@@ -130,7 +133,6 @@ export const FirebaseDatabaseProvider: FC<PropsWithChildren> = ({
   }, [db, setLoading]);
   return (
     <FirebaseDatabaseContext.Provider
-      // @ts-expect-error TODO #4
       value={{ createUser, listUsers, deleteUser, error, loading }}
     >
       {children}
