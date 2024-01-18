@@ -32,5 +32,5 @@
   "subscribedSince": "Abonniert seit",
   "actions": "Aktionen",
   "notAvailable": "n.a.",
-  "datetime": "{{value, datetime}}"
+  "intlDatetime": "{{val, datetime}}"
 }

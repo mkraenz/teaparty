@@ -26,7 +26,7 @@ const TableTest = () => {
         header: t('username'),
       }),
       columnHelper.accessor('createdAt', {
-        cell: (info) => t('datetime', { val: new Date(info.getValue()) }),
+        cell: (info) => t('intlDatetime', { val: new Date(info.getValue()) }),
         header: t('createdAt'),
       }),
       columnHelper.accessor('subscribedSince', {

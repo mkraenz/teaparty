@@ -31,5 +31,5 @@
   "subscribedSince": "Subscribed since",
   "actions": "Actions",
   "notAvailable": "n/a",
-  "datetime": "{{value, datetime}}"
+  "intlDatetime": "{{val, datetime}}"
 }
