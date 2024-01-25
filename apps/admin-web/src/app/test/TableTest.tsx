@@ -47,7 +47,7 @@ const TableTest = () => {
   useEffect(() => {
     const page = Number(searchParams.get('page')) || 1;
     const loadUsers = async () => {
-      const limit = 10;
+      const limit = 5;
       const oldestLoadedUserCreatedAt =
         page === 1 ? undefined : users.at(-1)?.createdAt;
       const endAtCreationDate = oldestLoadedUserCreatedAt

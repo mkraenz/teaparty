@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import { RootState } from '../store';
+import { RootState } from '../globals/store';
 
 export type User = {
   id: string;

@@ -3,6 +3,7 @@ import {
   Database,
   endAt,
   get,
+  limitToFirst,
   limitToLast,
   orderByChild,
   push,
@@ -23,6 +24,7 @@ type DatabaseState = {
     endAtCreationDate?: string | null;
   }) => Promise<User[]>;
   deleteUser: (id: string) => Promise<void>;
+  findUserByUsername: (queryString: string) => Promise<User[]>;
   error: null | Error;
   loading: boolean;
 };
@@ -36,6 +38,7 @@ const defaultDatabaseState: DatabaseState = {
   createUser: throwMissingProviderError,
   listUsers: throwMissingProviderError,
   deleteUser: throwMissingProviderError,
+  findUserByUsername: throwMissingProviderError,
   error: null,
   loading: false,
 };
@@ -111,6 +114,26 @@ const listUsers_ =
     return [] as User[];
   };
 
+const findUserByUsername_ =
+  ({ db }: Pick<Deps, 'db'>): DatabaseState['findUserByUsername'] =>
+  async (queryString) => {
+    if (!queryString) return [];
+    const q = query(
+      ref(db, userRoot),
+      orderByChild('username'),
+      startAt(queryString ?? ''),
+      limitToFirst(5)
+    );
+
+    const snapshot = await get(q);
+    if (snapshot.exists()) {
+      const val = snapshot.val() as { [key: string]: User };
+      const users = Object.values(val);
+      return users;
+    }
+    return [] as User[];
+  };
+
 const deleteUser_ =
   ({ db }: Pick<Deps, 'db'>) =>
   async (id: string) => {
@@ -123,17 +146,26 @@ export const FirebaseDatabaseProvider: FC<PropsWithChildren> = ({
   const { db } = useFirebase();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<null | Error>(null);
-  const { createUser, listUsers, deleteUser } = useMemo(() => {
-    const deps = { db, setLoading, setError };
-    return {
-      listUsers: injectDeps(deps)(listUsers_),
-      createUser: injectDeps(deps)(createUser_),
-      deleteUser: injectDeps(deps)(deleteUser_),
-    };
-  }, [db, setLoading]);
+  const { createUser, listUsers, deleteUser, findUserByUsername } =
+    useMemo(() => {
+      const deps = { db, setLoading, setError };
+      return {
+        listUsers: injectDeps(deps)(listUsers_),
+        createUser: injectDeps(deps)(createUser_),
+        deleteUser: injectDeps(deps)(deleteUser_),
+        findUserByUsername: injectDeps(deps)(findUserByUsername_),
+      };
+    }, [db, setLoading]);
   return (
     <FirebaseDatabaseContext.Provider
-      value={{ createUser, listUsers, deleteUser, error, loading }}
+      value={{
+        createUser,
+        listUsers,
+        deleteUser,
+        findUserByUsername,
+        error,
+        loading,
+      }}
     >
       {children}
     </FirebaseDatabaseContext.Provider>
