@@ -5,11 +5,20 @@ import {
   List,
   ListItem,
   Table,
+  Tbody,
+  Td,
+  Th,
   Thead,
   Tr,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { FiUserCheck, FiUserMinus, FiUserPlus, FiUserX } from 'react-icons/fi';
+import {
+  FiTrash,
+  FiUserCheck,
+  FiUserMinus,
+  FiUserPlus,
+  FiUserX,
+} from 'react-icons/fi';
 import { GrainFarm } from '../domain/buildings/grain-farm';
 import { builder } from '../domain/main';
 import { Workforce } from '../domain/workforce';
@@ -27,7 +36,7 @@ export const App = () => {
   });
   const wares = map.storage.wares;
   const city = map.city;
-  const buildings = Object.values(city.buildings);
+  const buildings = city.buildingsList;
   const citizens = city.citizens;
   return (
     <div>
@@ -43,50 +52,61 @@ export const App = () => {
       <Table>
         <Thead>
           <Tr>
-            <th>Time</th>
-            <th>Grain</th>
-            <th>Wine</th>
-            <th>Furs</th>
-            <th>Fabric</th>
-            <th>Beer</th>
+            <Th>Time</Th>
+            <Th>Grain</Th>
+            <Th>Wine</Th>
+            <Th>Furs</Th>
+            <Th>Fabric</Th>
+            <Th>Beer</Th>
           </Tr>
         </Thead>
-        <tbody>
-          <tr>
-            <td>{time}</td>
-            <td>{wares['grain']}</td>
-            <td>{wares['beer']}</td>
-            <td>{wares['wine']}</td>
-            <td>{wares['furs']}</td>
-            <td>{wares['fabric']}</td>
-          </tr>
-        </tbody>
+        <Tbody>
+          <Tr>
+            <Td>{time}</Td>
+            <Td>{wares['grain']}</Td>
+            <Td>{wares['beer']}</Td>
+            <Td>{wares['wine']}</Td>
+            <Td>{wares['furs']}</Td>
+            <Td>{wares['fabric']}</Td>
+          </Tr>
+        </Tbody>
       </Table>
       <Heading as="h2">Buildings</Heading>
       <List>
         {buildings.map((building) => (
           <ListItem display={'flex'} gap={10}>
-            Grain Farm: {(building as GrainFarm).workforce.workers} workers of{' '}
+            Grain Farm {building.idNumber}:{' '}
+            {(building as GrainFarm).workforce.workers} workers of{' '}
             {(building as GrainFarm).desiredWorkers} desired
             <IconButton
+              color="red.500"
               icon={<FiUserX />}
               aria-label="Fire all workers"
               onClick={() => (building as GrainFarm).setDesiredWorkers(0)}
             />
             <IconButton
+              color="red.300"
               icon={<FiUserMinus />}
               aria-label="Fire one worker"
               onClick={() => (building as GrainFarm).decrementDesiredWorkers(5)}
             />
             <IconButton
+              color="green.300"
               icon={<FiUserPlus />}
               aria-label="Add one workers"
               onClick={() => (building as GrainFarm).incrementDesiredWorkers(5)}
             />
             <IconButton
+              color="green.500"
               icon={<FiUserCheck />}
               aria-label="Max workers"
               onClick={() => (building as GrainFarm).setDesiredWorkers(100)}
+            />
+            <IconButton
+              colorScheme="red"
+              icon={<FiTrash />}
+              aria-label="Destroy building"
+              onClick={() => city.destroyBuilding(building.id)}
             />
           </ListItem>
         ))}

@@ -11,4 +11,8 @@ export abstract class Building {
   ownedBy(other: string) {
     return this.owner === other;
   }
+
+  destroy() {
+    // do nothing. override in subclass as needed. not every building can be destroyed
+  }
 }

@@ -111,4 +111,8 @@ export class GrainFarm extends Building {
       owner: this.owner,
     };
   }
+
+  destroy() {
+    this.setDesiredWorkers(0);
+  }
 }

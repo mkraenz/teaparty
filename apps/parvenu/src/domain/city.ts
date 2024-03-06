@@ -63,6 +63,12 @@ export class City {
     this.buildings[building.id] = building;
   }
 
+  destroyBuilding(buildingId: string) {
+    const building = this.buildings[buildingId];
+    building.destroy();
+    delete this.buildings[building.id];
+  }
+
   receiveMigrants(count: number) {
     this.citizens.addMigrants(count);
   }
