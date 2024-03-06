@@ -6,7 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "types": ["vite/client", "vitest"],
-    "lib": ["ESNext"]
+    "lib": ["ESNext", "dom"]
   },
   "files": [],
   "include": [],

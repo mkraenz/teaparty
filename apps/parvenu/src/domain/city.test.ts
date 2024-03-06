@@ -11,7 +11,7 @@ it('produces grain in a city with a fully occupied grain farm', () => {
   const citizens = new Citizens(storage);
   const workforce = new Workforce({
     citizens,
-    workers: 10,
+    workers: 100,
     maxWorkers: 100,
   });
   const cityTreasury = new Treasury();

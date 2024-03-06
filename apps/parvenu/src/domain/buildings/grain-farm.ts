@@ -10,10 +10,11 @@ export class GrainFarm extends Building {
   private readonly wagePerWorkerPerDay = 10;
   private needs: Need[] = [];
   private products: Product[] = [{ ware: 'grain', amount: 16 }];
-  private readonly workforce: Workforce;
+  public readonly workforce: Workforce;
   private readonly storage: Storage;
   private readonly treasury: Treasury;
   private readonly cityTreasury: Treasury;
+  public desiredWorkers = 100;
 
   /** @param storage Input resources will be taken from this storage and output products will be delivered to it. */
   constructor(params: {
@@ -82,11 +83,25 @@ export class GrainFarm extends Building {
   }
 
   hireWorkers() {
-    this.workforce.hire(100);
+    this.workforce.hire(this.desiredWorkers - this.workforce.workers);
+  }
+
+  setDesiredWorkers(amount: number) {
+    this.desiredWorkers = amount;
+    const tooManyWorkers = this.desiredWorkers < this.workforce.workers;
+    if (tooManyWorkers) this.fireWorkers();
+  }
+
+  incrementDesiredWorkers(amount: number) {
+    this.setDesiredWorkers(this.desiredWorkers + amount);
+  }
+
+  decrementDesiredWorkers(amount: number) {
+    this.setDesiredWorkers(this.desiredWorkers - amount);
   }
 
   fireWorkers() {
-    this.workforce.fire(100);
+    this.workforce.fire(this.workforce.workers - this.desiredWorkers);
   }
 
   save() {

@@ -67,4 +67,8 @@ export class Citizens {
     this.poor -= workersToFire;
     this.beggars += workersToFire;
   }
+
+  addMigrants(count: number) {
+    this.beggars += count;
+  }
 }

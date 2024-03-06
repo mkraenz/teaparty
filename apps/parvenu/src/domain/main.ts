@@ -23,7 +23,7 @@ const main = () => {
   }, 1000);
 };
 
-function builder() {
+export const builder = () => {
   const storage = new Storage();
   storage.empty();
   const citizens = new Citizens(storage);
@@ -66,6 +66,6 @@ function builder() {
     treasury,
   });
   return { storage, city, secondGrainFarm };
-}
+};
 
-main();
+// main();
