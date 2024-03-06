@@ -66,7 +66,7 @@ export const builder = () => {
     },
     treasury: cityTreasury,
   });
-  return { storage, city, secondGrainFarm };
+  return { storage, city, secondGrainFarm, playerTreasury: treasury };
 };
 
 // main();

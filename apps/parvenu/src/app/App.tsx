@@ -22,6 +22,7 @@ import {
   FiUserPlus,
   FiUserX,
 } from 'react-icons/fi';
+import { Brewery } from '../domain/buildings/brewery';
 import { GrainFarm } from '../domain/buildings/grain-farm';
 import { builder } from '../domain/main';
 import { Workforce } from '../domain/workforce';
@@ -46,11 +47,11 @@ export const App = () => {
   const city = mapRef.current.city;
   const buildings = city.buildingsList;
   const citizens = city.citizens;
+  const playerTreasury = mapRef.current.playerTreasury;
   return (
     <div>
       <h1>Welcome, Parvenu.</h1>
-      <Heading as="h2">Settings</Heading>
-      <Heading as={'h3'}>Speed</Heading>
+      <Heading as={'h2'}>Speed Settings</Heading>
       <RadioGroup
         onChange={(x) => setGamespeed(parseFloat(x))}
         value={gamespeed.toString()}
@@ -65,6 +66,11 @@ export const App = () => {
           <Radio value={'100'}>100x</Radio>
         </HStack>
       </RadioGroup>
+      <Heading as="h2">Player</Heading>
+      <List>
+        <ListItem>Treasury: {playerTreasury.balance}</ListItem>
+      </List>
+
       <Heading as="h2">City & Citizens</Heading>
       <List>
         <ListItem>Beggars: {citizens.beggars}</ListItem>
@@ -79,10 +85,10 @@ export const App = () => {
           <Tr>
             <Th>Time</Th>
             <Th>Grain</Th>
+            <Th>Beer</Th>
+            <Th>Fabric</Th>
             <Th>Wine</Th>
             <Th>Furs</Th>
-            <Th>Fabric</Th>
-            <Th>Beer</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -90,9 +96,9 @@ export const App = () => {
             <Td>{time}</Td>
             <Td>{wares['grain']}</Td>
             <Td>{wares['beer']}</Td>
-            <Td>{wares['wine']}</Td>
-            <Td>{wares['furs']}</Td>
             <Td>{wares['fabric']}</Td>
+            <Td>{wares['furs']}</Td>
+            <Td>{wares['wine']}</Td>
           </Tr>
         </Tbody>
       </Table>
@@ -100,9 +106,8 @@ export const App = () => {
       <List>
         {buildings.map((building) => (
           <ListItem display={'flex'} gap={10} key={building.id}>
-            Grain Farm {building.idNumber}:{' '}
-            {(building as GrainFarm).workforce.workers} workers of{' '}
-            {(building as GrainFarm).desiredWorkers} desired
+            {building.id}: {(building as GrainFarm).workforce.workers} workers
+            of {(building as GrainFarm).desiredWorkers} desired
             <IconButton
               color="red.500"
               icon={<FiUserX />}
@@ -143,7 +148,7 @@ export const App = () => {
             cityTreasury: city.treasury,
             owner: 'city',
             storage: city.storage,
-            treasury: city.treasury,
+            treasury: playerTreasury,
             workforce: new Workforce({
               citizens: city.citizens,
               maxWorkers: 100,
@@ -154,6 +159,24 @@ export const App = () => {
         }}
       >
         Add grain farm
+      </Button>
+      <Button
+        onClick={() => {
+          const brewery = new Brewery({
+            cityTreasury: city.treasury,
+            owner: 'city',
+            storage: city.storage,
+            treasury: playerTreasury,
+            workforce: new Workforce({
+              citizens: city.citizens,
+              maxWorkers: 100,
+              workers: 0,
+            }),
+          });
+          city.build(brewery);
+        }}
+      >
+        Add brewery
       </Button>
     </div>
   );

@@ -4,12 +4,17 @@ import { Need, Product } from '../types';
 import { Workforce } from '../workforce';
 import { Building } from './building';
 
-export class GrainFarm extends Building {
-  type = 'grain-farm';
-  readonly upkeepCost = 100;
+export class Brewery extends Building {
+  type = 'brewery';
+  readonly upkeepCost = 200;
   private readonly wagesPerWorkerPerDay = 10;
-  private needs: Need[] = [];
-  private products: Product[] = [{ ware: 'grain', amount: 16 }];
+  private needs: Need[] = [
+    {
+      ware: 'grain',
+      amount: 0.2,
+    },
+  ];
+  private products: Product[] = [{ ware: 'beer', amount: 8 }];
   public readonly workforce: Workforce;
   private readonly storage: Storage;
   private readonly treasury: Treasury;
