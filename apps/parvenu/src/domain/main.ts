@@ -35,6 +35,7 @@ export const builder = () => {
   });
   const cityTreasury = new Treasury();
   const treasury = new Treasury();
+  treasury.give(10000);
   const grainFarm = new GrainFarm({
     owner: 'city',
     storage,
@@ -63,7 +64,7 @@ export const builder = () => {
       [grainFarm.id]: grainFarm,
       [secondGrainFarm.id]: secondGrainFarm,
     },
-    treasury,
+    treasury: cityTreasury,
   });
   return { storage, city, secondGrainFarm };
 };

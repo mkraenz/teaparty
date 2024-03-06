@@ -28,15 +28,17 @@ import { Workforce } from '../domain/workforce';
 
 export const App = () => {
   const [time, setTime] = useState(0);
+  const timeRef = useRef(time);
   const mapRef = useRef(builder());
-  const [gamespeed, setGamespeed] = useState(0.1); // 0 = paused, 0.1, 1 = 1 day per second, 2, 3, 10
+  const [gamespeed, setGamespeed] = useState(1); // 0 = paused, 0.1, 1 = 1 day per second, 2, 3, 10
   useEffect(() => {
     const interval =
       gamespeed === 0
         ? 0
         : window.setInterval(() => {
-            setTime((prev) => prev + 1);
-            mapRef.current.city.passDay();
+            timeRef.current += 1; // i didn't find a better way to ensure access to the up-to-date time without rerunning useEffect
+            setTime(timeRef.current);
+            mapRef.current.city.passDay(timeRef.current);
           }, 1000 / gamespeed);
     return () => window.clearInterval(interval);
   }, [gamespeed]);

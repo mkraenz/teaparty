@@ -25,11 +25,15 @@ export class City {
     this.treasury = params.treasury;
   }
 
-  passDay() {
+  passDay(currentDay: number) {
     this.receiveMigrants(1); // TODO should be a function of the city's prosperity / wealth / citizens happiness
     this.employMigrants();
     this.produce();
     this.consumeAllResources();
+    const weekPassed = currentDay % 7 === 0;
+    if (weekPassed) {
+      this.collectUpkeep();
+    }
   }
 
   consumeResource(ware: string) {
@@ -44,6 +48,14 @@ export class City {
     Object.values(this.buildings).forEach((building) => {
       if ('produce' in building && typeof building.produce === 'function') {
         building.produce();
+      }
+    });
+  }
+
+  collectUpkeep() {
+    Object.values(this.buildings).forEach((building) => {
+      if ('payUpkeep' in building && typeof building.payUpkeep === 'function') {
+        building.payUpkeep();
       }
     });
   }
