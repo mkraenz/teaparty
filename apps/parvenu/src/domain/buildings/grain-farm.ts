@@ -6,7 +6,7 @@ import { Building } from './building';
 
 export class GrainFarm extends Building {
   type = 'grain-farm';
-  upkeepCost = 500;
+  readonly upkeepCost = 500;
   private readonly wagePerWorkerPerDay = 10;
   private needs: Need[] = [];
   private products: Product[] = [{ ware: 'grain', amount: 16 }];
@@ -87,7 +87,7 @@ export class GrainFarm extends Building {
   }
 
   setDesiredWorkers(amount: number) {
-    this.desiredWorkers = amount;
+    this.desiredWorkers = Math.min(amount, this.workforce.maxWorkers);
     const tooManyWorkers = this.desiredWorkers < this.workforce.workers;
     if (tooManyWorkers) this.fireWorkers();
   }

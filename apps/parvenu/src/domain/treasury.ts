@@ -5,15 +5,19 @@ export class InsufficientFundsError extends Error {
 }
 
 export class Treasury {
-  private balance = 0;
+  private _balance = 0;
+
+  get balance() {
+    return this._balance;
+  }
 
   take(amount: number) {
-    if (this.balance < amount) throw new InsufficientFundsError();
+    if (this._balance < amount) throw new InsufficientFundsError();
 
-    this.balance -= amount;
+    this._balance -= amount;
   }
 
   give(amount: number) {
-    this.balance += amount;
+    this._balance += amount;
   }
 }

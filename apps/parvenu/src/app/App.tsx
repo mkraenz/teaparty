@@ -1,9 +1,12 @@
 import {
   Button,
+  HStack,
   Heading,
   IconButton,
   List,
   ListItem,
+  Radio,
+  RadioGroup,
   Table,
   Tbody,
   Td,
@@ -11,7 +14,7 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   FiTrash,
   FiUserCheck,
@@ -23,30 +26,50 @@ import { GrainFarm } from '../domain/buildings/grain-farm';
 import { builder } from '../domain/main';
 import { Workforce } from '../domain/workforce';
 
-const map = builder();
-
 export const App = () => {
   const [time, setTime] = useState(0);
+  const mapRef = useRef(builder());
+  const [gamespeed, setGamespeed] = useState(0.1); // 0 = paused, 0.1, 1 = 1 day per second, 2, 3, 10
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTime((prev) => prev + 1);
-      map.city.passDay();
-    }, 1000);
-    return () => clearInterval(interval);
-  });
-  const wares = map.storage.wares;
-  const city = map.city;
+    const interval =
+      gamespeed === 0
+        ? 0
+        : window.setInterval(() => {
+            setTime((prev) => prev + 1);
+            mapRef.current.city.passDay();
+          }, 1000 / gamespeed);
+    return () => window.clearInterval(interval);
+  }, [gamespeed]);
+  const wares = mapRef.current.storage.wares;
+  const city = mapRef.current.city;
   const buildings = city.buildingsList;
   const citizens = city.citizens;
   return (
     <div>
       <h1>Welcome, Parvenu.</h1>
-      <Heading as="h2">Citizens</Heading>
+      <Heading as="h2">Settings</Heading>
+      <Heading as={'h3'}>Speed</Heading>
+      <RadioGroup
+        onChange={(x) => setGamespeed(parseFloat(x))}
+        value={gamespeed.toString()}
+      >
+        <HStack>
+          <Radio value={'0'}>0x</Radio>
+          <Radio value={'0.1'}>0.1x</Radio>
+          <Radio value={'1'}>1x</Radio>
+          <Radio value={'2'}>2x</Radio>
+          <Radio value={'3'}>3x</Radio>
+          <Radio value={'10'}>10x</Radio>
+          <Radio value={'100'}>100x</Radio>
+        </HStack>
+      </RadioGroup>
+      <Heading as="h2">City & Citizens</Heading>
       <List>
         <ListItem>Beggars: {citizens.beggars}</ListItem>
         <ListItem>Poor: {citizens.poor}</ListItem>
         <ListItem>Middle: {citizens.middle}</ListItem>
         <ListItem>Rich: {citizens.rich}</ListItem>
+        <ListItem>Treasury: {city.treasury.balance}</ListItem>
       </List>
       <Heading as="h2">Storage</Heading>
       <Table>
@@ -74,7 +97,7 @@ export const App = () => {
       <Heading as="h2">Buildings</Heading>
       <List>
         {buildings.map((building) => (
-          <ListItem display={'flex'} gap={10}>
+          <ListItem display={'flex'} gap={10} key={building.id}>
             Grain Farm {building.idNumber}:{' '}
             {(building as GrainFarm).workforce.workers} workers of{' '}
             {(building as GrainFarm).desiredWorkers} desired
@@ -114,7 +137,6 @@ export const App = () => {
 
       <Button
         onClick={() => {
-          const city = map.city;
           const farm = new GrainFarm({
             cityTreasury: city.treasury,
             owner: 'city',
@@ -126,7 +148,7 @@ export const App = () => {
               workers: 0,
             }),
           });
-          map.city.build(farm);
+          city.build(farm);
         }}
       >
         Add grain farm
