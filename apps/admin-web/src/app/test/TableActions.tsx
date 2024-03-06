@@ -39,6 +39,15 @@ const TableActions: FC<Props> = ({ user }) => {
       `Unsubscribe: Are you sure you want to unsubscribe user '${username}' (ID ${id})?`
     );
   };
+  const changeEmail = async (username: string, id: string) => {
+    const confirmed = window.confirm(
+      `Change email: Are you sure you want to change the email of user '${username}' (ID ${id}) to typescriptteatime+0206@gmail.com?`
+    );
+    if (confirmed) {
+      const res = await createSubscription();
+      console.log(res);
+    }
+  };
 
   return (
     <HStack>
@@ -67,6 +76,15 @@ const TableActions: FC<Props> = ({ user }) => {
           colorScheme="red"
           icon={<Icon as={FiTrash} />}
           aria-label={t('Delete user')}
+        />
+      </Tooltip>
+
+      <Tooltip label={t('Change Email')}>
+        <IconButton
+          onClick={() => changeEmail(user.username, user.id)}
+          colorScheme="red"
+          icon={<Icon as={FiTrash} />}
+          aria-label={t('Change Email')}
         />
       </Tooltip>
     </HStack>
