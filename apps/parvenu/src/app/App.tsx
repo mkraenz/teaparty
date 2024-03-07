@@ -125,37 +125,31 @@ export const App = () => {
         {buildings.map((building) => (
           <ListItem display={'flex'} gap={10} key={building.id}>
             {building.id}:{' '}
-            {building instanceof GrainFarm
-              ? building.workforce.workers
-              : (building as Brewery).productionSystem.workforce.workers}{' '}
-            workers of{' '}
-            {building instanceof GrainFarm
-              ? building.desiredWorkers
-              : (building as Brewery).productionSystem.desiredWorkers}{' '}
-            desired
+            {(building as Brewery).productionSystem.workforce.workers} workers
+            of {(building as Brewery).productionSystem.desiredWorkers} desired
             <IconButton
               color="red.500"
               icon={<FiUserX />}
               aria-label="Fire all workers"
-              onClick={() => (building as GrainFarm).setDesiredWorkers(0)}
+              onClick={() => (building as any).setDesiredWorkers(0)}
             />
             <IconButton
               color="red.300"
               icon={<FiUserMinus />}
               aria-label="Fire one worker"
-              onClick={() => (building as GrainFarm).decrementDesiredWorkers(5)}
+              onClick={() => (building as any).decrementDesiredWorkers(5)}
             />
             <IconButton
               color="green.300"
               icon={<FiUserPlus />}
               aria-label="Add one workers"
-              onClick={() => (building as GrainFarm).incrementDesiredWorkers(5)}
+              onClick={() => (building as any).incrementDesiredWorkers(5)}
             />
             <IconButton
               color="green.500"
               icon={<FiUserCheck />}
               aria-label="Max workers"
-              onClick={() => (building as GrainFarm).setDesiredWorkers(100)}
+              onClick={() => (building as any).setDesiredWorkers(100)}
             />
             <IconButton
               colorScheme="red"
@@ -169,9 +163,8 @@ export const App = () => {
 
       <Button
         onClick={() => {
-          const farm = new GrainFarm({
+          const productionSystem = new ProductionSystem({
             cityTreasury: city.treasury,
-            owner: 'city',
             storage: city.storage,
             treasury: playerTreasury,
             workforce: new Workforce({
@@ -179,6 +172,11 @@ export const App = () => {
               maxWorkers: 100,
               workers: 0,
             }),
+          });
+          const ActualGrainFarm = WithProductionSystem(GrainFarm);
+          const farm = new ActualGrainFarm({
+            owner: 'city',
+            productionSystem,
           });
           city.build(farm);
         }}
