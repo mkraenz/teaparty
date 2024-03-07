@@ -24,6 +24,7 @@ import {
 } from 'react-icons/fi';
 import { Brewery } from '../domain/buildings/brewery';
 import { GrainFarm, PGrainFarm } from '../domain/buildings/grain-farm';
+import { productionBuildings } from '../domain/buildings/production-buildings.data';
 import { ProductionSystem } from '../domain/buildings/production.system';
 import { WithProductionSystem } from '../domain/buildings/with-production-system.mixin';
 import { Woodcutter } from '../domain/buildings/woodcutter';
@@ -82,6 +83,16 @@ export const App = () => {
     });
   const addBrewery = () => {
     const ProductionBuilding = Brewery;
+    const costs = productionBuildings.brewery.setupCosts;
+
+    if (!city.storage.hasResources(costs.needs))
+      return console.log('not enough resources to build');
+    if (!playerTreasury.hasEnough(costs.money))
+      return console.log('not enough money to build');
+
+    city.storage.consume(costs.needs);
+    playerTreasury.take(costs.money);
+
     const productionSystem = makeProductionSystem();
     const ActualBuilding = WithProductionSystem(ProductionBuilding);
     const building = new ActualBuilding({
@@ -93,6 +104,16 @@ export const App = () => {
   };
   const addGrainFarm = () => {
     const ProductionBuilding = GrainFarm;
+    const costs = productionBuildings.grainFarm.setupCosts;
+
+    if (!city.storage.hasResources(costs.needs))
+      return console.log('not enough resources to build');
+    if (!playerTreasury.hasEnough(costs.money))
+      return console.log('not enough money to build');
+
+    city.storage.consume(costs.needs);
+    playerTreasury.take(costs.money);
+
     const productionSystem = makeProductionSystem();
     const ActualBuilding = WithProductionSystem(ProductionBuilding);
     const building = new ActualBuilding({
@@ -104,6 +125,16 @@ export const App = () => {
   };
   const addWoodcutter = () => {
     const ProductionBuilding = Woodcutter;
+    const costs = productionBuildings.woodcutter.setupCosts;
+
+    if (!city.storage.hasResources(costs.needs))
+      return console.log('not enough resources to build');
+    if (!playerTreasury.hasEnough(costs.money))
+      return console.log('not enough money to build');
+
+    city.storage.consume(costs.needs);
+    playerTreasury.take(costs.money);
+
     const productionSystem = makeProductionSystem();
     const ActualBuilding = WithProductionSystem(ProductionBuilding);
     const building = new ActualBuilding({

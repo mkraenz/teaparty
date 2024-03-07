@@ -20,4 +20,8 @@ export class Treasury {
   give(amount: number) {
     this._balance += amount;
   }
+
+  hasEnough(amount: number) {
+    return this._balance >= amount;
+  }
 }

@@ -7,7 +7,7 @@ export const productionBuildings = {
     wagesPerWorkerPerDay: 10,
     setupCosts: {
       needs: [{ ware: 'wood', amount: 80 }],
-      money: 1000,
+      money: 1200,
     },
   },
   grainFarm: {

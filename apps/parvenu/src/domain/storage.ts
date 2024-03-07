@@ -43,4 +43,8 @@ export class Storage {
   log() {
     console.log(this.wares);
   }
+
+  consume(needs: { ware: string; amount: number }[]) {
+    needs.forEach((need) => this.remove(need.ware, need.amount));
+  }
 }

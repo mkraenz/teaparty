@@ -4,6 +4,11 @@ const WareConsumptionFactors: Record<
   string,
   { poor: number; middle: number; rich: number }
 > = {
+  wood: {
+    poor: 0,
+    middle: 0,
+    rich: 0,
+  },
   beer: {
     poor: 2,
     middle: 3,
