@@ -2,17 +2,17 @@ import { Building } from './building';
 import { productionBuildings } from './production-buildings.data';
 import { ProductionSystem } from './production.system';
 
-export class GrainFarm extends Building {
+export class Woodcutter extends Building {
   public readonly productionSystem: ProductionSystem;
 
   constructor(params: { owner: string; productionSystem: ProductionSystem }) {
     super({
       owner: params.owner,
-      type: productionBuildings.grainFarm.type,
+      type: productionBuildings.woodcutter.type,
     });
     this.productionSystem = params.productionSystem;
 
-    this.productionSystem.init(productionBuildings.grainFarm);
+    this.productionSystem.init(productionBuildings.woodcutter);
   }
 
   save() {
@@ -27,5 +27,3 @@ export class GrainFarm extends Building {
     this.productionSystem.destroy();
   }
 }
-
-export interface PGrainFarm extends GrainFarm, ProductionSystem {}

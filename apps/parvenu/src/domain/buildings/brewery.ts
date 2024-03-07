@@ -1,22 +1,18 @@
 import { Building } from './building';
+import { productionBuildings } from './production-buildings.data';
 import { ProductionSystem } from './production.system';
 
 export class Brewery extends Building {
-  type = 'brewery';
   public readonly productionSystem: ProductionSystem;
 
-  /** @param storage Input resources will be taken from this storage and output products will be delivered to it. */
   constructor(params: { owner: string; productionSystem: ProductionSystem }) {
-    super();
-    this.productionSystem = params.productionSystem;
-    this.owner = params.owner;
-
-    this.productionSystem.init({
-      upkeepCost: 200,
-      products: [{ ware: 'beer', amount: 8 }],
-      needs: [{ ware: 'grain', amount: 0.2 }],
-      wagesPerWorkerPerDay: 10,
+    super({
+      owner: params.owner,
+      type: productionBuildings.brewery.type,
     });
+    this.productionSystem = params.productionSystem;
+
+    this.productionSystem.init(productionBuildings.brewery);
   }
 
   save() {

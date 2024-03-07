@@ -1,11 +1,12 @@
 import { Need } from './types';
 
 const initialWares: Record<string, number> = {
-  beer: 12,
-  grain: 0,
-  fabric: 15,
-  furs: 3,
-  wine: 5,
+  beer: 60,
+  fabric: 60,
+  furs: 60,
+  grain: 60,
+  wine: 60,
+  wood: 60,
 };
 
 export class Storage {

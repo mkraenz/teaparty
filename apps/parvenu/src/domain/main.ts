@@ -23,7 +23,7 @@ const main = () => {
 
 export const builder = () => {
   const storage = new Storage();
-  storage.empty();
+  // storage.empty();
   const citizens = new Citizens(storage);
   citizens.beggars = 200;
   const cityTreasury = new Treasury();

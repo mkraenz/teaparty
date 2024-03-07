@@ -14,7 +14,7 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import {
   FiTrash,
   FiUserCheck,
@@ -26,6 +26,7 @@ import { Brewery } from '../domain/buildings/brewery';
 import { GrainFarm, PGrainFarm } from '../domain/buildings/grain-farm';
 import { ProductionSystem } from '../domain/buildings/production.system';
 import { WithProductionSystem } from '../domain/buildings/with-production-system.mixin';
+import { Woodcutter } from '../domain/buildings/woodcutter';
 import { builder } from '../domain/main';
 import { Workforce } from '../domain/workforce';
 
@@ -42,6 +43,7 @@ const handleKeyPress =
 
 export const App = () => {
   const [time, setTime] = useState(0);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const timeRef = useRef(time);
   const mapRef = useRef(builder());
   const [gamespeed, setGamespeed] = useState(1); // 0 = paused, 0.1, 1 = 1 day per second, 2, 3, 10
@@ -66,6 +68,52 @@ export const App = () => {
   const buildings = city.buildingsList;
   const citizens = city.citizens;
   const playerTreasury = mapRef.current.playerTreasury;
+
+  const makeProductionSystem = () =>
+    new ProductionSystem({
+      cityTreasury: city.treasury,
+      storage: city.storage,
+      treasury: playerTreasury,
+      workforce: new Workforce({
+        citizens: city.citizens,
+        maxWorkers: 100,
+        workers: 0,
+      }),
+    });
+  const addBrewery = () => {
+    const ProductionBuilding = Brewery;
+    const productionSystem = makeProductionSystem();
+    const ActualBuilding = WithProductionSystem(ProductionBuilding);
+    const building = new ActualBuilding({
+      owner: 'city',
+      productionSystem,
+    });
+    city.build(building);
+    forceUpdate();
+  };
+  const addGrainFarm = () => {
+    const ProductionBuilding = GrainFarm;
+    const productionSystem = makeProductionSystem();
+    const ActualBuilding = WithProductionSystem(ProductionBuilding);
+    const building = new ActualBuilding({
+      owner: 'city',
+      productionSystem,
+    });
+    city.build(building);
+    forceUpdate();
+  };
+  const addWoodcutter = () => {
+    const ProductionBuilding = Woodcutter;
+    const productionSystem = makeProductionSystem();
+    const ActualBuilding = WithProductionSystem(ProductionBuilding);
+    const building = new ActualBuilding({
+      owner: 'city',
+      productionSystem,
+    });
+    city.build(building);
+    forceUpdate();
+  };
+
   return (
     <div>
       <h1>Welcome, Parvenu.</h1>
@@ -102,6 +150,7 @@ export const App = () => {
         <Thead>
           <Tr>
             <Th>Time</Th>
+            <Th>Wood</Th>
             <Th>Grain</Th>
             <Th>Beer</Th>
             <Th>Fabric</Th>
@@ -112,6 +161,7 @@ export const App = () => {
         <Tbody>
           <Tr>
             <Td>{time}</Td>
+            <Td>{wares['wood']}</Td>
             <Td>{wares['grain']}</Td>
             <Td>{wares['beer']}</Td>
             <Td>{wares['fabric']}</Td>
@@ -166,50 +216,9 @@ export const App = () => {
         ))}
       </List>
 
-      <Button
-        onClick={() => {
-          const productionSystem = new ProductionSystem({
-            cityTreasury: city.treasury,
-            storage: city.storage,
-            treasury: playerTreasury,
-            workforce: new Workforce({
-              citizens: city.citizens,
-              maxWorkers: 100,
-              workers: 0,
-            }),
-          });
-          const ActualGrainFarm = WithProductionSystem(GrainFarm);
-          const farm = new ActualGrainFarm({
-            owner: 'city',
-            productionSystem,
-          });
-          city.build(farm);
-        }}
-      >
-        Add grain farm
-      </Button>
-      <Button
-        onClick={() => {
-          const productionSystem = new ProductionSystem({
-            cityTreasury: city.treasury,
-            storage: city.storage,
-            treasury: playerTreasury,
-            workforce: new Workforce({
-              citizens: city.citizens,
-              maxWorkers: 100,
-              workers: 0,
-            }),
-          });
-          const ActualBrewery = WithProductionSystem(Brewery);
-          const brewery = new ActualBrewery({
-            owner: 'city',
-            productionSystem,
-          });
-          city.build(brewery);
-        }}
-      >
-        Add brewery
-      </Button>
+      <Button onClick={addWoodcutter}>Build woodcutter</Button>
+      <Button onClick={addGrainFarm}>Build grain farm</Button>
+      <Button onClick={addBrewery}>Build brewery</Button>
     </div>
   );
 };
