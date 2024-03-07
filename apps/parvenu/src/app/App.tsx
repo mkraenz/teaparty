@@ -65,6 +65,7 @@ export const App = () => {
     return () => document.removeEventListener('keydown', listener);
   }, [setGamespeed]);
   const wares = mapRef.current.storage.wares;
+  const playerWares = mapRef.current.playerStorage.wares;
   const city = mapRef.current.city;
   const buildings = city.buildingsList;
   const citizens = city.citizens;
@@ -168,6 +169,10 @@ export const App = () => {
           <Radio value={'100'}>100x</Radio>
         </HStack>
       </RadioGroup>
+      <Heading as="h2">
+        Day {time} {time !== 0 && time % 7 === 0 ? '(Payday)' : ''}
+      </Heading>
+
       <Heading as="h2">Player</Heading>
       <List>
         <ListItem>Treasury: {playerTreasury.balance}</ListItem>
@@ -185,7 +190,7 @@ export const App = () => {
       <Table>
         <Thead>
           <Tr>
-            <Th>Time</Th>
+            <Th>Owner</Th>
             <Th>Wood</Th>
             <Th>Grain</Th>
             <Th>Beer</Th>
@@ -196,13 +201,23 @@ export const App = () => {
         </Thead>
         <Tbody>
           <Tr>
-            <Td>{time}</Td>
+            <Td>City</Td>
             <Td>{wares['wood']}</Td>
             <Td>{wares['grain']}</Td>
             <Td>{wares['beer']}</Td>
             <Td>{wares['fabric']}</Td>
             <Td>{wares['furs']}</Td>
             <Td>{wares['wine']}</Td>
+          </Tr>
+
+          <Tr>
+            <Td>Player</Td>
+            <Td>{playerWares['wood']}</Td>
+            <Td>{playerWares['grain']}</Td>
+            <Td>{playerWares['beer']}</Td>
+            <Td>{playerWares['fabric']}</Td>
+            <Td>{playerWares['furs']}</Td>
+            <Td>{playerWares['wine']}</Td>
           </Tr>
         </Tbody>
       </Table>

@@ -27,6 +27,8 @@ export const builder = () => {
   const citizens = new Citizens(storage);
   citizens.beggars = 200;
   const cityTreasury = new Treasury();
+  const playerStorage = new Storage();
+  playerStorage.empty();
   const treasury = new Treasury();
   treasury.give(10000);
   const city = new City({
@@ -35,7 +37,7 @@ export const builder = () => {
     buildings: {},
     treasury: cityTreasury,
   });
-  return { storage, city, playerTreasury: treasury };
+  return { storage, city, playerTreasury: treasury, playerStorage };
 };
 
 // main();
