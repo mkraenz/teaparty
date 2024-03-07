@@ -1,10 +1,11 @@
 import { Citizens } from './citizens';
 import { City } from './city';
 import { Storage } from './storage';
+import { TradingPost } from './trading-post';
 import { Treasury } from './treasury';
 
 const main = () => {
-  const { storage, city } = builder();
+  const { cityStorage: storage, city } = builder();
 
   storage.log();
   let totalTime = 0;
@@ -22,22 +23,37 @@ const main = () => {
 };
 
 export const builder = () => {
-  const storage = new Storage();
+  const cityStorage = new Storage();
   // storage.empty();
-  const citizens = new Citizens(storage);
+  const citizens = new Citizens(cityStorage);
   citizens.beggars = 200;
   const cityTreasury = new Treasury();
   const playerStorage = new Storage();
   playerStorage.empty();
-  const treasury = new Treasury();
-  treasury.give(10000);
+  const playerTreasury = new Treasury();
+  playerTreasury.give(10000);
+  const tradingPost = new TradingPost({
+    citizens,
+    cityStorage: cityStorage,
+    cityTreasury: cityTreasury,
+  });
   const city = new City({
     citizens,
-    storage,
+    storage: cityStorage,
+    tradingPost,
     buildings: {},
     treasury: cityTreasury,
   });
-  return { storage, city, playerTreasury: treasury, playerStorage };
+  tradingPost.setMerchant({
+    storage: playerStorage,
+    treasury: playerTreasury,
+  });
+  return {
+    cityStorage,
+    city,
+    playerTreasury: playerTreasury,
+    playerStorage,
+  };
 };
 
 // main();

@@ -1,6 +1,7 @@
 import { Building } from './buildings/building';
 import { Citizens } from './citizens';
 import { Storage } from './storage';
+import { TradingPost } from './trading-post';
 import { Treasury } from './treasury';
 
 export class City {
@@ -8,6 +9,7 @@ export class City {
   public readonly buildings: Record<string, Building>;
   public readonly storage: Storage;
   public readonly treasury: Treasury;
+  public readonly tradingPost: TradingPost;
 
   get buildingsList() {
     return Object.values(this.buildings);
@@ -18,11 +20,13 @@ export class City {
     buildings: Record<string, Building>;
     storage: Storage;
     treasury: Treasury;
+    tradingPost: TradingPost;
   }) {
     this.citizens = params.citizens;
     this.buildings = params.buildings;
     this.storage = params.storage;
     this.treasury = params.treasury;
+    this.tradingPost = params.tradingPost;
   }
 
   passDay(currentDay: number) {

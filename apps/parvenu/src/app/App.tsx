@@ -64,7 +64,7 @@ export const App = () => {
     window.addEventListener('keydown', listener, false);
     return () => document.removeEventListener('keydown', listener);
   }, [setGamespeed]);
-  const wares = mapRef.current.storage.wares;
+  const wares = mapRef.current.cityStorage.wares;
   const playerWares = mapRef.current.playerStorage.wares;
   const city = mapRef.current.city;
   const buildings = city.buildingsList;
@@ -153,8 +153,9 @@ export const App = () => {
 
   return (
     <div>
-      <h1>Welcome, Parvenu.</h1>
-      <Heading as={'h2'}>Speed Settings</Heading>
+      <Heading as="h2">
+        Day {time} {time !== 0 && time % 7 === 0 ? '(Payday)' : ''}
+      </Heading>
       <RadioGroup
         onChange={(x) => setGamespeed(parseFloat(x))}
         value={gamespeed.toString()}
@@ -169,9 +170,6 @@ export const App = () => {
           <Radio value={'100'}>100x</Radio>
         </HStack>
       </RadioGroup>
-      <Heading as="h2">
-        Day {time} {time !== 0 && time % 7 === 0 ? '(Payday)' : ''}
-      </Heading>
 
       <Heading as="h2">Player</Heading>
       <List>
@@ -190,35 +188,31 @@ export const App = () => {
       <Table>
         <Thead>
           <Tr>
-            <Th>Owner</Th>
-            <Th>Wood</Th>
-            <Th>Grain</Th>
-            <Th>Beer</Th>
-            <Th>Fabric</Th>
-            <Th>Wine</Th>
-            <Th>Furs</Th>
+            <Th>Goods</Th>
+            <Th>Town</Th>
+            <Th>Buy</Th>
+            <Th>Sell</Th>
+            <Th>You</Th>
           </Tr>
         </Thead>
         <Tbody>
-          <Tr>
-            <Td>City</Td>
-            <Td>{wares['wood']}</Td>
-            <Td>{wares['grain']}</Td>
-            <Td>{wares['beer']}</Td>
-            <Td>{wares['fabric']}</Td>
-            <Td>{wares['furs']}</Td>
-            <Td>{wares['wine']}</Td>
-          </Tr>
-
-          <Tr>
-            <Td>Player</Td>
-            <Td>{playerWares['wood']}</Td>
-            <Td>{playerWares['grain']}</Td>
-            <Td>{playerWares['beer']}</Td>
-            <Td>{playerWares['fabric']}</Td>
-            <Td>{playerWares['furs']}</Td>
-            <Td>{playerWares['wine']}</Td>
-          </Tr>
+          {Object.keys(wares).map((type) => (
+            <Tr key={type}>
+              <Td>{type}</Td>
+              <Td>{wares[type]}</Td>
+              <Td>
+                <Button>
+                  {city.tradingPost.getQuoteForSellingToMerchant(type)}
+                </Button>
+              </Td>
+              <Td>
+                <Button>
+                  {city.tradingPost.getQuoteForBuyingFromMerchant(type)}
+                </Button>
+              </Td>
+              <Td>{playerWares['wine']}</Td>
+            </Tr>
+          ))}
         </Tbody>
       </Table>
       <Heading as="h2">Buildings</Heading>
