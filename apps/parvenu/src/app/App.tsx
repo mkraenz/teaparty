@@ -103,7 +103,7 @@ export const App = () => {
     const productionSystem = makeProductionSystem();
     const ActualBuilding = WithProductionSystem(ProductionBuilding);
     const building = new ActualBuilding({
-      owner: 'city',
+      owner: 'player',
       productionSystem,
     });
     city.build(building);
@@ -124,7 +124,7 @@ export const App = () => {
     const productionSystem = makeProductionSystem();
     const ActualBuilding = WithProductionSystem(ProductionBuilding);
     const building = new ActualBuilding({
-      owner: 'city',
+      owner: 'player',
       productionSystem,
     });
     city.build(building);
@@ -145,7 +145,7 @@ export const App = () => {
     const productionSystem = makeProductionSystem();
     const ActualBuilding = WithProductionSystem(ProductionBuilding);
     const building = new ActualBuilding({
-      owner: 'city',
+      owner: 'player',
       productionSystem,
     });
     city.build(building);
@@ -281,7 +281,7 @@ export const App = () => {
       <List>
         {buildings.map((building) => (
           <ListItem display={'flex'} gap={10} key={building.id}>
-            {building.id}:{' '}
+            {building.owner}'s {building.id}:{' '}
             {(building as PGrainFarm).productionSystem.workforce.workers}{' '}
             workers of{' '}
             {(building as PGrainFarm).productionSystem.desiredWorkers} desired

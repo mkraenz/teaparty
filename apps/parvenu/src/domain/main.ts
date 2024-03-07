@@ -1,8 +1,12 @@
+import { ProductionSystem } from './buildings/production.system';
+import { WithProductionSystem } from './buildings/with-production-system.mixin';
+import { Woodcutter } from './buildings/woodcutter';
 import { Citizens } from './citizens';
 import { City } from './city';
 import { Storage } from './storage';
 import { TradingPost } from './trading-post';
 import { Treasury } from './treasury';
+import { Workforce } from './workforce';
 
 const main = () => {
   const { cityStorage: storage, city } = builder();
@@ -44,6 +48,26 @@ export const builder = () => {
     buildings: {},
     treasury: cityTreasury,
   });
+
+  const PWoodCutter = WithProductionSystem(Woodcutter);
+  const makeCityProductionSystem = () =>
+    new ProductionSystem({
+      cityTreasury: city.treasury,
+      storage: cityStorage,
+      treasury: cityTreasury,
+      workforce: new Workforce({
+        citizens: city.citizens,
+        maxWorkers: 100,
+        workers: 0,
+      }),
+    });
+  const productionSystem = makeCityProductionSystem();
+  const building = new PWoodCutter({
+    owner: 'city',
+    productionSystem,
+  });
+  city.build(building);
+
   tradingPost.setMerchant({
     storage: playerStorage,
     treasury: playerTreasury,
