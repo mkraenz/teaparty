@@ -25,8 +25,20 @@ import {
 import { Brewery } from '../domain/buildings/brewery';
 import { GrainFarm } from '../domain/buildings/grain-farm';
 import { ProductionSystem } from '../domain/buildings/production.system';
+import { WithProductionSystem } from '../domain/buildings/with-production-system.mixin';
 import { builder } from '../domain/main';
 import { Workforce } from '../domain/workforce';
+
+const handleKeyPress =
+  (setSpeed: (value: number) => void) => (event: KeyboardEvent) => {
+    if (event.key === '1') setSpeed(0);
+    if (event.key === '2') setSpeed(0.1);
+    if (event.key === '3') setSpeed(1);
+    if (event.key === '4') setSpeed(2);
+    if (event.key === '5') setSpeed(3);
+    if (event.key === '6') setSpeed(10);
+    if (event.key === '7') setSpeed(100);
+  };
 
 export const App = () => {
   const [time, setTime] = useState(0);
@@ -44,6 +56,11 @@ export const App = () => {
           }, 1000 / gamespeed);
     return () => window.clearInterval(interval);
   }, [gamespeed]);
+  useEffect(() => {
+    const listener = handleKeyPress(setGamespeed);
+    window.addEventListener('keydown', listener, false);
+    return () => document.removeEventListener('keydown', listener);
+  }, [setGamespeed]);
   const wares = mapRef.current.storage.wares;
   const city = mapRef.current.city;
   const buildings = city.buildingsList;
@@ -180,7 +197,8 @@ export const App = () => {
               workers: 0,
             }),
           });
-          const brewery = new Brewery({
+          const ActualBrewery = WithProductionSystem(Brewery);
+          const brewery = new ActualBrewery({
             owner: 'city',
             productionSystem,
           });

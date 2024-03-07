@@ -19,46 +19,6 @@ export class Brewery extends Building {
     });
   }
 
-  produce() {
-    this.productionSystem.produce();
-  }
-
-  payWorkers(days: number) {
-    this.productionSystem.payWorkers(days);
-  }
-
-  payUpkeep() {
-    this.productionSystem.payUpkeep();
-  }
-
-  addWorkers(count: number) {
-    this.productionSystem.addWorkers(count);
-  }
-
-  removeWorkers(count: number) {
-    this.productionSystem.removeWorkers(count);
-  }
-
-  hireWorkers() {
-    this.productionSystem.hireWorkers();
-  }
-
-  setDesiredWorkers(amount: number) {
-    this.productionSystem.setDesiredWorkers(amount);
-  }
-
-  incrementDesiredWorkers(amount: number) {
-    this.productionSystem.incrementDesiredWorkers(amount);
-  }
-
-  decrementDesiredWorkers(amount: number) {
-    this.productionSystem.decrementDesiredWorkers(amount);
-  }
-
-  fireWorkers() {
-    this.productionSystem.fireWorkers();
-  }
-
   save() {
     return {
       type: this.type,
