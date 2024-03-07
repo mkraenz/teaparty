@@ -24,6 +24,7 @@ import {
 } from 'react-icons/fi';
 import { Brewery } from '../domain/buildings/brewery';
 import { GrainFarm } from '../domain/buildings/grain-farm';
+import { ProductionSystem } from '../domain/buildings/production.system';
 import { builder } from '../domain/main';
 import { Workforce } from '../domain/workforce';
 
@@ -106,8 +107,15 @@ export const App = () => {
       <List>
         {buildings.map((building) => (
           <ListItem display={'flex'} gap={10} key={building.id}>
-            {building.id}: {(building as GrainFarm).workforce.workers} workers
-            of {(building as GrainFarm).desiredWorkers} desired
+            {building.id}:{' '}
+            {building instanceof GrainFarm
+              ? building.workforce.workers
+              : (building as Brewery).productionSystem.workforce.workers}{' '}
+            workers of{' '}
+            {building instanceof GrainFarm
+              ? building.desiredWorkers
+              : (building as Brewery).productionSystem.desiredWorkers}{' '}
+            desired
             <IconButton
               color="red.500"
               icon={<FiUserX />}
@@ -162,9 +170,8 @@ export const App = () => {
       </Button>
       <Button
         onClick={() => {
-          const brewery = new Brewery({
+          const productionSystem = new ProductionSystem({
             cityTreasury: city.treasury,
-            owner: 'city',
             storage: city.storage,
             treasury: playerTreasury,
             workforce: new Workforce({
@@ -172,6 +179,10 @@ export const App = () => {
               maxWorkers: 100,
               workers: 0,
             }),
+          });
+          const brewery = new Brewery({
+            owner: 'city',
+            productionSystem,
           });
           city.build(brewery);
         }}
