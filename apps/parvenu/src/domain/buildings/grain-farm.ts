@@ -31,3 +31,5 @@ export class GrainFarm extends Building {
     this.productionSystem.destroy();
   }
 }
+
+export interface PGrainFarm extends GrainFarm, ProductionSystem {}

@@ -52,3 +52,5 @@ export function WithProductionSystem<TBase extends HasProductionSystem>(
     }
   };
 }
+
+export type Producify = InstanceType<ReturnType<typeof WithProductionSystem>>;

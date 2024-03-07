@@ -23,7 +23,7 @@ import {
   FiUserX,
 } from 'react-icons/fi';
 import { Brewery } from '../domain/buildings/brewery';
-import { GrainFarm } from '../domain/buildings/grain-farm';
+import { GrainFarm, PGrainFarm } from '../domain/buildings/grain-farm';
 import { ProductionSystem } from '../domain/buildings/production.system';
 import { WithProductionSystem } from '../domain/buildings/with-production-system.mixin';
 import { builder } from '../domain/main';
@@ -125,31 +125,36 @@ export const App = () => {
         {buildings.map((building) => (
           <ListItem display={'flex'} gap={10} key={building.id}>
             {building.id}:{' '}
-            {(building as Brewery).productionSystem.workforce.workers} workers
-            of {(building as Brewery).productionSystem.desiredWorkers} desired
+            {(building as PGrainFarm).productionSystem.workforce.workers}{' '}
+            workers of{' '}
+            {(building as PGrainFarm).productionSystem.desiredWorkers} desired
             <IconButton
               color="red.500"
               icon={<FiUserX />}
               aria-label="Fire all workers"
-              onClick={() => (building as any).setDesiredWorkers(0)}
+              onClick={() => (building as PGrainFarm).setDesiredWorkers(0)}
             />
             <IconButton
               color="red.300"
               icon={<FiUserMinus />}
               aria-label="Fire one worker"
-              onClick={() => (building as any).decrementDesiredWorkers(5)}
+              onClick={() =>
+                (building as PGrainFarm).decrementDesiredWorkers(5)
+              }
             />
             <IconButton
               color="green.300"
               icon={<FiUserPlus />}
               aria-label="Add one workers"
-              onClick={() => (building as any).incrementDesiredWorkers(5)}
+              onClick={() =>
+                (building as PGrainFarm).incrementDesiredWorkers(5)
+              }
             />
             <IconButton
               color="green.500"
               icon={<FiUserCheck />}
               aria-label="Max workers"
-              onClick={() => (building as any).setDesiredWorkers(100)}
+              onClick={() => (building as PGrainFarm).setDesiredWorkers(100)}
             />
             <IconButton
               colorScheme="red"
