@@ -10,6 +10,7 @@ const initialWares: Record<string, number> = {
 };
 
 export class Storage {
+  owner: string = '';
   /** IMPORTANT: The amount of wares can be floating point numbers. But whenever we show it to the user, we typically display integers for simplicity. */
   wares = { ...initialWares };
 

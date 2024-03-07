@@ -5,11 +5,11 @@ import { TradingPost } from './trading-post';
 import { Treasury } from './treasury';
 
 export class City {
-  public readonly citizens: Citizens;
-  public readonly buildings: Record<string, Building>;
-  public readonly storage: Storage;
-  public readonly treasury: Treasury;
-  public readonly tradingPost: TradingPost;
+  readonly citizens: Citizens;
+  readonly buildings: Record<string, Building>;
+  readonly storage: Storage;
+  readonly treasury: Treasury;
+  readonly tradingPost: TradingPost;
 
   get buildingsList() {
     return Object.values(this.buildings);

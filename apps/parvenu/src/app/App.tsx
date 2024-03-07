@@ -44,7 +44,7 @@ const handleKeyPress =
 
 export const App = () => {
   const [time, setTime] = useState(0);
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [, forceRerender] = useReducer((x) => x + 1, 0);
   const timeRef = useRef(time);
   const mapRef = useRef(builder());
   const [gamespeed, setGamespeed] = useState(1); // 0 = paused, 0.1, 1 = 1 day per second, 2, 3, 10
@@ -68,7 +68,7 @@ export const App = () => {
   const playerWares = mapRef.current.playerStorage.wares;
   const city = mapRef.current.city;
   const buildings = city.buildingsList;
-  const citizens = city.citizens;
+  const { citizens, tradingPost } = city;
   const playerTreasury = mapRef.current.playerTreasury;
 
   const canBuild = (type: keyof typeof productionBuildings) =>
@@ -97,7 +97,7 @@ export const App = () => {
       return console.log('not enough money to build');
 
     city.storage.consume(costs.needs);
-    playerTreasury.take(costs.money);
+    playerTreasury.credit(costs.money);
 
     const productionSystem = makeProductionSystem();
     const ActualBuilding = WithProductionSystem(ProductionBuilding);
@@ -106,7 +106,7 @@ export const App = () => {
       productionSystem,
     });
     city.build(building);
-    forceUpdate();
+    forceRerender();
   };
   const addGrainFarm = () => {
     const ProductionBuilding = GrainFarm;
@@ -118,7 +118,7 @@ export const App = () => {
       return console.log('not enough money to build');
 
     city.storage.consume(costs.needs);
-    playerTreasury.take(costs.money);
+    playerTreasury.credit(costs.money);
 
     const productionSystem = makeProductionSystem();
     const ActualBuilding = WithProductionSystem(ProductionBuilding);
@@ -127,7 +127,7 @@ export const App = () => {
       productionSystem,
     });
     city.build(building);
-    forceUpdate();
+    forceRerender();
   };
   const addWoodcutter = () => {
     const ProductionBuilding = Woodcutter;
@@ -139,7 +139,7 @@ export const App = () => {
       return console.log('not enough money to build');
 
     city.storage.consume(costs.needs);
-    playerTreasury.take(costs.money);
+    playerTreasury.credit(costs.money);
 
     const productionSystem = makeProductionSystem();
     const ActualBuilding = WithProductionSystem(ProductionBuilding);
@@ -148,7 +148,7 @@ export const App = () => {
       productionSystem,
     });
     city.build(building);
-    forceUpdate();
+    forceRerender();
   };
 
   return (
@@ -196,21 +196,33 @@ export const App = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {Object.keys(wares).map((type) => (
-            <Tr key={type}>
-              <Td>{type}</Td>
-              <Td>{wares[type]}</Td>
+          {Object.keys(wares).map((ware) => (
+            <Tr key={ware}>
+              <Td>{ware}</Td>
+              <Td>{wares[ware]}</Td>
               <Td>
-                <Button>
-                  {city.tradingPost.getQuoteForSellingToMerchant(type)}
+                <Button
+                  onClick={() => {
+                    tradingPost.sellToMerchant(ware);
+                    forceRerender();
+                  }}
+                  isDisabled={!tradingPost.canSellToMerchant(ware)}
+                >
+                  {tradingPost.getQuoteForSellingToMerchant(ware)}
                 </Button>
               </Td>
               <Td>
-                <Button>
-                  {city.tradingPost.getQuoteForBuyingFromMerchant(type)}
+                <Button
+                  onClick={() => {
+                    tradingPost.buyFromMerchant(ware);
+                    forceRerender();
+                  }}
+                  isDisabled={!tradingPost.canBuyFromMerchant(ware)}
+                >
+                  {tradingPost.getQuoteForBuyingFromMerchant(ware)}
                 </Button>
               </Td>
-              <Td>{playerWares['wine']}</Td>
+              <Td>{playerWares[ware]}</Td>
             </Tr>
           ))}
         </Tbody>
@@ -229,7 +241,7 @@ export const App = () => {
               aria-label="Fire all workers"
               onClick={() => {
                 (building as PGrainFarm).setDesiredWorkers(0);
-                forceUpdate();
+                forceRerender();
               }}
             />
             <IconButton
@@ -238,7 +250,7 @@ export const App = () => {
               aria-label="Fire one worker"
               onClick={() => {
                 (building as PGrainFarm).decrementDesiredWorkers(5);
-                forceUpdate();
+                forceRerender();
               }}
             />
             <IconButton
@@ -247,7 +259,7 @@ export const App = () => {
               aria-label="Add one workers"
               onClick={() => {
                 (building as PGrainFarm).incrementDesiredWorkers(5);
-                forceUpdate();
+                forceRerender();
               }}
             />
             <IconButton
@@ -256,7 +268,7 @@ export const App = () => {
               aria-label="Max workers"
               onClick={() => {
                 (building as PGrainFarm).setDesiredWorkers(100);
-                forceUpdate();
+                forceRerender();
               }}
             />
             <IconButton
@@ -265,7 +277,7 @@ export const App = () => {
               aria-label="Destroy building"
               onClick={() => {
                 city.destroyBuilding(building.id);
-                forceUpdate();
+                forceRerender();
               }}
             />
           </ListItem>

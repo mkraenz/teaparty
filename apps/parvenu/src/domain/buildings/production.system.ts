@@ -59,7 +59,7 @@ export class ProductionSystem {
   payWorkers(days: number) {
     try {
       const wages = this.workforce.workers * this.wagesPerWorkerPerDay * days;
-      this.treasury.take(wages);
+      this.treasury.credit(wages);
       this.workforce.receiveWages(wages);
     } catch (error) {
       // this.workforce.strike() // maybe some day :)
@@ -67,8 +67,8 @@ export class ProductionSystem {
   }
 
   payUpkeep() {
-    this.treasury.take(this.upkeepCost);
-    this.cityTreasury.give(this.upkeepCost);
+    this.treasury.credit(this.upkeepCost);
+    this.cityTreasury.debit(this.upkeepCost);
   }
 
   private consumeInputs(productionFactor: number) {

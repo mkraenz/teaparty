@@ -31,7 +31,7 @@ export const builder = () => {
   const playerStorage = new Storage();
   playerStorage.empty();
   const playerTreasury = new Treasury();
-  playerTreasury.give(10000);
+  playerTreasury.debit(10000);
   const tradingPost = new TradingPost({
     citizens,
     cityStorage: cityStorage,
