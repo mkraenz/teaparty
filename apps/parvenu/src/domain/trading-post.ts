@@ -1,7 +1,12 @@
+import { range } from 'lodash';
 import { Citizens } from './citizens';
 import { Storage } from './storage';
 import { Treasury } from './treasury';
 import { waresData } from './wares.data';
+
+const sum = (a: number, b: number) => a + b;
+
+const bidAskSpread = 0.95;
 
 export class TradingPost {
   private readonly cityStorage: Storage;
@@ -26,13 +31,63 @@ export class TradingPost {
   }
 
   getQuoteForBuyingFromMerchant(ware: string, amountTraded: number = 1) {
-    return waresData[ware].basePrice * 0.9 * amountTraded;
-    // function(ware type, citizens consumption, wares in storage , city-owned production building consumption, (global availability of ware?? - not now), )
-    // basePrice_type * fn(how many days do the current stocks satisfy total consumption)
+    // future goal
+    // quote = function(ware type, citizens consumption, wares in storage , city-owned production building consumption, (global availability of ware?? - not now), )
+    // quote = basePrice(type) * fn(how many days do the current stocks satisfy total consumption)
+
+    const consumptionPerDay = this.citizens.getResourceConsumption(ware);
+    // TODO should we include the city-owned production building consumption?
+    const basePrice = waresData[ware].basePrice;
+    const daysInAMonth = 30;
+    const daysInAWeek = 7;
+    // simulating buying one item at a time
+    const totalPrice = range(amountTraded)
+      .map((n) => {
+        const waresLeft = this.cityStorage.getStock(ware) + n;
+        const daysOfStock = waresLeft / consumptionPerDay;
+        const stockForLessThanAWeek = daysOfStock < daysInAWeek;
+        const stockForLessthanAMonth = daysOfStock < daysInAMonth;
+        if (stockForLessThanAWeek)
+          // baseprice * (1 + m/7), m <= 7, thus factor between 1 and 2
+          return basePrice * (1 + (daysInAWeek - daysOfStock) / daysInAWeek);
+        if (stockForLessthanAMonth)
+          return (
+            // baseprice * (0.5 + 0.5*m/30 ), m <= 30. thus factor between 0.5 and 1
+            basePrice * (0.5 + (daysInAMonth - daysOfStock) / daysInAMonth / 2)
+          );
+        // 30+ days
+        return basePrice * 0.5;
+      })
+      .reduce(sum, 0);
+    // return totalPrice * split;
+    return Math.ceil(totalPrice * bidAskSpread);
   }
 
   getQuoteForSellingToMerchant(ware: string, amountTraded: number = 1) {
-    return waresData[ware].basePrice * amountTraded;
+    const consumptionPerDay = this.citizens.getResourceConsumption(ware);
+    // TODO should we include the city-owned production building consumption?
+    const basePrice = waresData[ware].basePrice;
+    const daysInAMonth = 30;
+    const daysInAWeek = 7;
+    // simulating buying one item at a time
+    const totalPrice = range(amountTraded)
+      .map((n) => {
+        const waresLeft = this.cityStorage.getStock(ware) - n;
+        const daysOfStock = waresLeft / consumptionPerDay;
+        const stockForLessThanAWeek = daysOfStock < daysInAWeek;
+        const stockForLessthanAMonth = daysOfStock < daysInAMonth;
+        if (stockForLessThanAWeek)
+          return basePrice * (1 + (daysInAWeek - daysOfStock) / daysInAWeek);
+        if (stockForLessthanAMonth)
+          return (
+            basePrice * (0.5 + (daysInAMonth - daysOfStock) / daysInAMonth / 2)
+          );
+        // 30+ days
+        return basePrice * 0.5;
+      })
+      .reduce(sum, 0);
+    // return totalPrice;
+    return Math.ceil(totalPrice);
   }
 
   canSellToMerchant(ware: string, amount: number = 1) {
@@ -60,11 +115,12 @@ export class TradingPost {
 
   buyFromMerchant(ware: string, amount: number = 1) {
     const price = this.getQuoteForBuyingFromMerchant(ware, amount);
+    console.log(price);
     if (this.canBuyFromMerchant(ware, amount)) {
       this.merchantStorage.remove(ware, amount);
       this.cityStorage.add(ware, amount);
-      this.cityTreasury.credit(price);
       this.merchantTreasury.debit(price);
+      // this.cityTreasury.credit(price); // question: should the city have finite money?
     }
   }
 }

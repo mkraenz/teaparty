@@ -13,14 +13,18 @@ export class Citizens {
     return this.poor + this.middle + this.rich;
   }
 
-  consumeResource(ware: string) {
+  getResourceConsumption(ware: string) {
     const factorsByPopulationType = waresData[ware].civicConsumption;
     const theoreticalConsumption =
       (this.poor * factorsByPopulationType.poor +
         this.middle * factorsByPopulationType.middle +
         this.rich * factorsByPopulationType.rich) /
       1000.0;
-    const consumption = Math.ceil(theoreticalConsumption); // ceiling so that consumption >= 1
+    return Math.ceil(theoreticalConsumption); // ceiling so that consumption >= 1
+  }
+
+  consumeResource(ware: string) {
+    const consumption = this.getResourceConsumption(ware);
     this.storage.remove(ware, consumption);
   }
 

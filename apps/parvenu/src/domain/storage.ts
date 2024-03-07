@@ -21,6 +21,10 @@ export class Storage {
     }));
   }
 
+  getStock(ware: string) {
+    return this.wares[ware];
+  }
+
   empty() {
     Object.keys(this.wares).forEach((ware) => {
       this.wares[ware] = 0;

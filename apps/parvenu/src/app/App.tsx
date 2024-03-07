@@ -65,21 +65,22 @@ export const App = () => {
     return () => document.removeEventListener('keydown', listener);
   }, [setGamespeed]);
   const wares = mapRef.current.cityStorage.wares;
-  const playerWares = mapRef.current.playerStorage.wares;
+  const playerStorage = mapRef.current.playerStorage;
+  const playerWares = playerStorage.wares;
   const city = mapRef.current.city;
   const buildings = city.buildingsList;
   const { citizens, tradingPost } = city;
   const playerTreasury = mapRef.current.playerTreasury;
 
   const canBuild = (type: keyof typeof productionBuildings) =>
-    city.storage.hasResources(
+    playerStorage.hasResources(
       productionBuildings[type].constructionCosts.needs
     ) &&
     playerTreasury.hasEnough(productionBuildings[type].constructionCosts.money);
   const makeProductionSystem = () =>
     new ProductionSystem({
       cityTreasury: city.treasury,
-      storage: city.storage,
+      storage: playerStorage,
       treasury: playerTreasury,
       workforce: new Workforce({
         citizens: city.citizens,
@@ -87,16 +88,16 @@ export const App = () => {
         workers: 0,
       }),
     });
-  const addBrewery = () => {
+  const buildBrewery = () => {
     const ProductionBuilding = Brewery;
     const costs = productionBuildings.brewery.constructionCosts;
 
-    if (!city.storage.hasResources(costs.needs))
+    if (!playerStorage.hasResources(costs.needs))
       return console.log('not enough resources to build');
     if (!playerTreasury.hasEnough(costs.money))
       return console.log('not enough money to build');
 
-    city.storage.consume(costs.needs);
+    playerStorage.consume(costs.needs);
     playerTreasury.credit(costs.money);
 
     const productionSystem = makeProductionSystem();
@@ -108,16 +109,16 @@ export const App = () => {
     city.build(building);
     forceRerender();
   };
-  const addGrainFarm = () => {
+  const buildGrainFarm = () => {
     const ProductionBuilding = GrainFarm;
     const costs = productionBuildings.grainFarm.constructionCosts;
 
-    if (!city.storage.hasResources(costs.needs))
+    if (!playerStorage.hasResources(costs.needs))
       return console.log('not enough resources to build');
     if (!playerTreasury.hasEnough(costs.money))
       return console.log('not enough money to build');
 
-    city.storage.consume(costs.needs);
+    playerStorage.consume(costs.needs);
     playerTreasury.credit(costs.money);
 
     const productionSystem = makeProductionSystem();
@@ -129,16 +130,16 @@ export const App = () => {
     city.build(building);
     forceRerender();
   };
-  const addWoodcutter = () => {
+  const buildWoodcutter = () => {
     const ProductionBuilding = Woodcutter;
     const costs = productionBuildings.woodcutter.constructionCosts;
 
-    if (!city.storage.hasResources(costs.needs))
+    if (!playerStorage.hasResources(costs.needs))
       return console.log('not enough resources to build');
     if (!playerTreasury.hasEnough(costs.money))
       return console.log('not enough money to build');
 
-    city.storage.consume(costs.needs);
+    playerStorage.consume(costs.needs);
     playerTreasury.credit(costs.money);
 
     const productionSystem = makeProductionSystem();
@@ -190,7 +191,8 @@ export const App = () => {
           <Tr>
             <Th>Goods</Th>
             <Th>Town</Th>
-            <Th>Buy</Th>
+            <Th>Buy 1</Th>
+            <Th>Buy all</Th>
             <Th>Sell</Th>
             <Th>You</Th>
           </Tr>
@@ -207,8 +209,32 @@ export const App = () => {
                     forceRerender();
                   }}
                   isDisabled={!tradingPost.canSellToMerchant(ware)}
+                  width={100}
                 >
                   {tradingPost.getQuoteForSellingToMerchant(ware)}
+                </Button>
+              </Td>
+              <Td>
+                <Button
+                  onClick={() => {
+                    tradingPost.sellToMerchant(
+                      ware,
+                      city.storage.getStock(ware)
+                    );
+                    forceRerender();
+                  }}
+                  isDisabled={
+                    !tradingPost.canSellToMerchant(
+                      ware,
+                      city.storage.getStock(ware)
+                    )
+                  }
+                  width={100}
+                >
+                  {tradingPost.getQuoteForSellingToMerchant(
+                    ware,
+                    city.storage.getStock(ware)
+                  )}
                 </Button>
               </Td>
               <Td>
@@ -218,8 +244,32 @@ export const App = () => {
                     forceRerender();
                   }}
                   isDisabled={!tradingPost.canBuyFromMerchant(ware)}
+                  width={100}
                 >
                   {tradingPost.getQuoteForBuyingFromMerchant(ware)}
+                </Button>
+              </Td>
+              <Td>
+                <Button
+                  onClick={() => {
+                    tradingPost.buyFromMerchant(
+                      ware,
+                      playerStorage.getStock(ware)
+                    );
+                    forceRerender();
+                  }}
+                  isDisabled={
+                    !tradingPost.canBuyFromMerchant(
+                      ware,
+                      playerStorage.getStock(ware)
+                    )
+                  }
+                  width={100}
+                >
+                  {tradingPost.getQuoteForBuyingFromMerchant(
+                    ware,
+                    playerStorage.getStock(ware)
+                  )}
                 </Button>
               </Td>
               <Td>{playerWares[ware]}</Td>
@@ -284,13 +334,13 @@ export const App = () => {
         ))}
       </List>
 
-      <Button onClick={addWoodcutter} isDisabled={!canBuild('woodcutter')}>
+      <Button onClick={buildWoodcutter} isDisabled={!canBuild('woodcutter')}>
         Build woodcutter
       </Button>
-      <Button onClick={addGrainFarm} isDisabled={!canBuild('grainFarm')}>
+      <Button onClick={buildGrainFarm} isDisabled={!canBuild('grainFarm')}>
         Build grain farm
       </Button>
-      <Button onClick={addBrewery} isDisabled={!canBuild('brewery')}>
+      <Button onClick={buildBrewery} isDisabled={!canBuild('brewery')}>
         Build brewery
       </Button>
     </div>
