@@ -70,6 +70,11 @@ export const App = () => {
   const citizens = city.citizens;
   const playerTreasury = mapRef.current.playerTreasury;
 
+  const canBuild = (type: keyof typeof productionBuildings) =>
+    city.storage.hasResources(
+      productionBuildings[type].constructionCosts.needs
+    ) &&
+    playerTreasury.hasEnough(productionBuildings[type].constructionCosts.money);
   const makeProductionSystem = () =>
     new ProductionSystem({
       cityTreasury: city.treasury,
@@ -83,7 +88,7 @@ export const App = () => {
     });
   const addBrewery = () => {
     const ProductionBuilding = Brewery;
-    const costs = productionBuildings.brewery.setupCosts;
+    const costs = productionBuildings.brewery.constructionCosts;
 
     if (!city.storage.hasResources(costs.needs))
       return console.log('not enough resources to build');
@@ -104,7 +109,7 @@ export const App = () => {
   };
   const addGrainFarm = () => {
     const ProductionBuilding = GrainFarm;
-    const costs = productionBuildings.grainFarm.setupCosts;
+    const costs = productionBuildings.grainFarm.constructionCosts;
 
     if (!city.storage.hasResources(costs.needs))
       return console.log('not enough resources to build');
@@ -125,7 +130,7 @@ export const App = () => {
   };
   const addWoodcutter = () => {
     const ProductionBuilding = Woodcutter;
-    const costs = productionBuildings.woodcutter.setupCosts;
+    const costs = productionBuildings.woodcutter.constructionCosts;
 
     if (!city.storage.hasResources(costs.needs))
       return console.log('not enough resources to build');
@@ -213,43 +218,60 @@ export const App = () => {
               color="red.500"
               icon={<FiUserX />}
               aria-label="Fire all workers"
-              onClick={() => (building as PGrainFarm).setDesiredWorkers(0)}
+              onClick={() => {
+                (building as PGrainFarm).setDesiredWorkers(0);
+                forceUpdate();
+              }}
             />
             <IconButton
               color="red.300"
               icon={<FiUserMinus />}
               aria-label="Fire one worker"
-              onClick={() =>
-                (building as PGrainFarm).decrementDesiredWorkers(5)
-              }
+              onClick={() => {
+                (building as PGrainFarm).decrementDesiredWorkers(5);
+                forceUpdate();
+              }}
             />
             <IconButton
               color="green.300"
               icon={<FiUserPlus />}
               aria-label="Add one workers"
-              onClick={() =>
-                (building as PGrainFarm).incrementDesiredWorkers(5)
-              }
+              onClick={() => {
+                (building as PGrainFarm).incrementDesiredWorkers(5);
+                forceUpdate();
+              }}
             />
             <IconButton
               color="green.500"
               icon={<FiUserCheck />}
               aria-label="Max workers"
-              onClick={() => (building as PGrainFarm).setDesiredWorkers(100)}
+              onClick={() => {
+                (building as PGrainFarm).setDesiredWorkers(100);
+                forceUpdate();
+              }}
             />
             <IconButton
               colorScheme="red"
               icon={<FiTrash />}
               aria-label="Destroy building"
-              onClick={() => city.destroyBuilding(building.id)}
+              onClick={() => {
+                city.destroyBuilding(building.id);
+                forceUpdate();
+              }}
             />
           </ListItem>
         ))}
       </List>
 
-      <Button onClick={addWoodcutter}>Build woodcutter</Button>
-      <Button onClick={addGrainFarm}>Build grain farm</Button>
-      <Button onClick={addBrewery}>Build brewery</Button>
+      <Button onClick={addWoodcutter} isDisabled={!canBuild('woodcutter')}>
+        Build woodcutter
+      </Button>
+      <Button onClick={addGrainFarm} isDisabled={!canBuild('grainFarm')}>
+        Build grain farm
+      </Button>
+      <Button onClick={addBrewery} isDisabled={!canBuild('brewery')}>
+        Build brewery
+      </Button>
     </div>
   );
 };

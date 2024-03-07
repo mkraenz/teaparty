@@ -5,7 +5,7 @@ export const productionBuildings = {
     products: [{ ware: 'beer', amount: 8 }],
     needs: [{ ware: 'grain', amount: 1 }],
     wagesPerWorkerPerDay: 10,
-    setupCosts: {
+    constructionCosts: {
       needs: [{ ware: 'wood', amount: 80 }],
       money: 1200,
     },
@@ -16,7 +16,7 @@ export const productionBuildings = {
     products: [{ ware: 'grain', amount: 16 }],
     needs: [],
     wagesPerWorkerPerDay: 10,
-    setupCosts: {
+    constructionCosts: {
       needs: [{ ware: 'wood', amount: 60 }],
       money: 1000,
     },
@@ -27,7 +27,7 @@ export const productionBuildings = {
     products: [{ ware: 'wood', amount: 6 }],
     needs: [],
     wagesPerWorkerPerDay: 10,
-    setupCosts: {
+    constructionCosts: {
       needs: [
         {
           ware: 'wood',
