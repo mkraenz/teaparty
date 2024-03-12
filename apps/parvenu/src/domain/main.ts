@@ -3,32 +3,15 @@ import { WithProductionSystem } from './buildings/with-production-system.mixin';
 import { Woodcutter } from './buildings/woodcutter';
 import { Citizens } from './citizens';
 import { City } from './city';
+import { Player } from './player';
 import { Storage } from './storage';
 import { TradingPost } from './trading-post';
 import { Treasury } from './treasury';
 import { Workforce } from './workforce';
+import { World } from './world';
 
-const main = () => {
-  const { cityStorage: storage, city } = builder();
-
-  storage.log();
-  let totalTime = 0;
-  setInterval(() => {
-    totalTime += 1;
-    if (totalTime === 10) {
-      console.log('############# hiring workers for 2nd grain farm ##########');
-      // secondGrainFarm.hireWorkers();
-    }
-    console.log('time', totalTime);
-    city.produce();
-    city.consumeAllResources();
-    storage.log();
-  }, 1000);
-};
-
-export const builder = () => {
+export const main = () => {
   const cityStorage = new Storage();
-  // storage.empty();
   const citizens = new Citizens(cityStorage);
   citizens.beggars = 200;
   const cityTreasury = new Treasury();
@@ -42,6 +25,7 @@ export const builder = () => {
     cityTreasury: cityTreasury,
   });
   const city = new City({
+    name: 'Hamburg',
     citizens,
     storage: cityStorage,
     tradingPost,
@@ -72,12 +56,19 @@ export const builder = () => {
     storage: playerStorage,
     treasury: playerTreasury,
   });
+  const player = new Player({
+    storage: playerStorage,
+    treasury: playerTreasury,
+  });
+  const world = new World({
+    cities: { [city.name]: city },
+    player,
+  });
   return {
     cityStorage,
     city,
     playerTreasury: playerTreasury,
     playerStorage,
+    world,
   };
 };
-
-// main();

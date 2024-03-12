@@ -5,16 +5,15 @@ import {
   IconButton,
   List,
   ListItem,
-  Radio,
-  RadioGroup,
   Table,
   Tbody,
   Td,
   Th,
   Thead,
   Tr,
+  VStack,
 } from '@chakra-ui/react';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   FiTrash,
   FiUserCheck,
@@ -28,49 +27,29 @@ import { productionBuildings } from '../domain/buildings/production-buildings.da
 import { ProductionSystem } from '../domain/buildings/production.system';
 import { WithProductionSystem } from '../domain/buildings/with-production-system.mixin';
 import { Woodcutter } from '../domain/buildings/woodcutter';
-import { builder } from '../domain/main';
+import { main } from '../domain/main';
 import { Workforce } from '../domain/workforce';
-
-const handleKeyPress =
-  (setSpeed: (value: number) => void) => (event: KeyboardEvent) => {
-    if (event.key === '1') setSpeed(0);
-    if (event.key === '2') setSpeed(0.1);
-    if (event.key === '3') setSpeed(1);
-    if (event.key === '4') setSpeed(2);
-    if (event.key === '5') setSpeed(3);
-    if (event.key === '6') setSpeed(10);
-    if (event.key === '7') setSpeed(100);
-  };
+import Settings from './Settings';
+import useGameLoop from './hooks/useGameLoop';
+import useGamespeed from './hooks/useGamespeed';
 
 export const App = () => {
+  useGameLoop();
   const [time, setTime] = useState(0);
-  const [, forceRerender] = useReducer((x) => x + 1, 0);
-  const timeRef = useRef(time);
-  const mapRef = useRef(builder());
-  const [gamespeed, setGamespeed] = useState(1); // 0 = paused, 0.1, 1 = 1 day per second, 2, 3, 10
-  useEffect(() => {
-    const interval =
-      gamespeed === 0
-        ? 0
-        : window.setInterval(() => {
-            timeRef.current += 1; // i didn't find a better way to ensure access to the up-to-date time without rerunning useEffect
-            setTime(timeRef.current);
-            mapRef.current.city.passDay(timeRef.current);
-          }, 1000 / gamespeed);
-    return () => window.clearInterval(interval);
-  }, [gamespeed]);
-  useEffect(() => {
-    const listener = handleKeyPress(setGamespeed);
-    window.addEventListener('keydown', listener, false);
-    return () => document.removeEventListener('keydown', listener);
-  }, [setGamespeed]);
+  const mapRef = useRef(main());
+  const { gamespeed, setGamespeed } = useGamespeed(
+    time,
+    setTime,
+    mapRef.current.world
+  );
   const wares = mapRef.current.cityStorage.wares;
-  const playerStorage = mapRef.current.playerStorage;
+  const player = mapRef.current.world.player;
+  const playerStorage = player.storage;
+  const playerTreasury = player.treasury;
   const playerWares = playerStorage.wares;
   const city = mapRef.current.city;
   const buildings = city.buildingsList;
   const { citizens, tradingPost } = city;
-  const playerTreasury = mapRef.current.playerTreasury;
 
   const canBuild = (type: keyof typeof productionBuildings) =>
     playerStorage.hasResources(
@@ -107,7 +86,6 @@ export const App = () => {
       productionSystem,
     });
     city.build(building);
-    forceRerender();
   };
   const buildGrainFarm = () => {
     const ProductionBuilding = GrainFarm;
@@ -128,7 +106,6 @@ export const App = () => {
       productionSystem,
     });
     city.build(building);
-    forceRerender();
   };
   const buildWoodcutter = () => {
     const ProductionBuilding = Woodcutter;
@@ -149,7 +126,6 @@ export const App = () => {
       productionSystem,
     });
     city.build(building);
-    forceRerender();
   };
 
   return (
@@ -157,35 +133,28 @@ export const App = () => {
       <Heading as="h2">
         Day {time} {time !== 0 && time % 7 === 0 ? '(Payday)' : ''}
       </Heading>
-      <RadioGroup
-        onChange={(x) => setGamespeed(parseFloat(x))}
-        value={gamespeed.toString()}
-      >
-        <HStack>
-          <Radio value={'0'}>0x</Radio>
-          <Radio value={'0.1'}>0.1x</Radio>
-          <Radio value={'1'}>1x</Radio>
-          <Radio value={'2'}>2x</Radio>
-          <Radio value={'3'}>3x</Radio>
-          <Radio value={'10'}>10x</Radio>
-          <Radio value={'100'}>100x</Radio>
-        </HStack>
-      </RadioGroup>
+      <Settings gamespeed={gamespeed} setGamespeed={setGamespeed} />
 
-      <Heading as="h2">Player</Heading>
-      <List>
-        <ListItem>Treasury: {playerTreasury.balance}</ListItem>
-      </List>
+      <HStack align={'flex-start'} justify={'space-between'} gap={20}>
+        <VStack align={'flex-start'}>
+          <Heading as="h2">City {city.name} and its Citizens</Heading>
+          <List>
+            <ListItem>Beggars: {citizens.beggars}</ListItem>
+            <ListItem>Poor: {citizens.poor}</ListItem>
+            <ListItem>Middle: {citizens.middle}</ListItem>
+            <ListItem>Rich: {citizens.rich}</ListItem>
+            <ListItem>{city.treasury.balance} Gold</ListItem>
+          </List>
+        </VStack>
 
-      <Heading as="h2">City & Citizens</Heading>
-      <List>
-        <ListItem>Beggars: {citizens.beggars}</ListItem>
-        <ListItem>Poor: {citizens.poor}</ListItem>
-        <ListItem>Middle: {citizens.middle}</ListItem>
-        <ListItem>Rich: {citizens.rich}</ListItem>
-        <ListItem>Treasury: {city.treasury.balance}</ListItem>
-      </List>
-      <Heading as="h2">Storage</Heading>
+        <VStack align="flex-end">
+          <Heading as="h2">Player</Heading>
+          <List>
+            <ListItem>{playerTreasury.balance} Gold</ListItem>
+          </List>
+        </VStack>
+      </HStack>
+      <Heading as="h2">Trading Post</Heading>
       <Table>
         <Thead>
           <Tr>
@@ -206,7 +175,6 @@ export const App = () => {
                 <Button
                   onClick={() => {
                     tradingPost.sellToMerchant(ware);
-                    forceRerender();
                   }}
                   isDisabled={!tradingPost.canSellToMerchant(ware)}
                   width={100}
@@ -221,7 +189,6 @@ export const App = () => {
                       ware,
                       city.storage.getStock(ware)
                     );
-                    forceRerender();
                   }}
                   isDisabled={
                     !tradingPost.canSellToMerchant(
@@ -241,7 +208,6 @@ export const App = () => {
                 <Button
                   onClick={() => {
                     tradingPost.buyFromMerchant(ware);
-                    forceRerender();
                   }}
                   isDisabled={!tradingPost.canBuyFromMerchant(ware)}
                   width={100}
@@ -256,7 +222,6 @@ export const App = () => {
                       ware,
                       playerStorage.getStock(ware)
                     );
-                    forceRerender();
                   }}
                   isDisabled={
                     !tradingPost.canBuyFromMerchant(
@@ -278,6 +243,16 @@ export const App = () => {
         </Tbody>
       </Table>
       <Heading as="h2">Buildings</Heading>
+
+      <Button onClick={buildWoodcutter} isDisabled={!canBuild('woodcutter')}>
+        Build woodcutter
+      </Button>
+      <Button onClick={buildGrainFarm} isDisabled={!canBuild('grainFarm')}>
+        Build grain farm
+      </Button>
+      <Button onClick={buildBrewery} isDisabled={!canBuild('brewery')}>
+        Build brewery
+      </Button>
       <List>
         {buildings.map((building) => (
           <ListItem display={'flex'} gap={10} key={building.id}>
@@ -291,7 +266,6 @@ export const App = () => {
               aria-label="Fire all workers"
               onClick={() => {
                 (building as PGrainFarm).setDesiredWorkers(0);
-                forceRerender();
               }}
             />
             <IconButton
@@ -300,7 +274,6 @@ export const App = () => {
               aria-label="Fire one worker"
               onClick={() => {
                 (building as PGrainFarm).decrementDesiredWorkers(5);
-                forceRerender();
               }}
             />
             <IconButton
@@ -309,7 +282,6 @@ export const App = () => {
               aria-label="Add one workers"
               onClick={() => {
                 (building as PGrainFarm).incrementDesiredWorkers(5);
-                forceRerender();
               }}
             />
             <IconButton
@@ -318,7 +290,6 @@ export const App = () => {
               aria-label="Max workers"
               onClick={() => {
                 (building as PGrainFarm).setDesiredWorkers(100);
-                forceRerender();
               }}
             />
             <IconButton
@@ -327,22 +298,11 @@ export const App = () => {
               aria-label="Destroy building"
               onClick={() => {
                 city.destroyBuilding(building.id);
-                forceRerender();
               }}
             />
           </ListItem>
         ))}
       </List>
-
-      <Button onClick={buildWoodcutter} isDisabled={!canBuild('woodcutter')}>
-        Build woodcutter
-      </Button>
-      <Button onClick={buildGrainFarm} isDisabled={!canBuild('grainFarm')}>
-        Build grain farm
-      </Button>
-      <Button onClick={buildBrewery} isDisabled={!canBuild('brewery')}>
-        Build brewery
-      </Button>
     </div>
   );
 };

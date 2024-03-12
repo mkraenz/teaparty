@@ -8,8 +8,7 @@
       "@nx/react/typings/image.d.ts",
       "vite/client",
       "vitest/importMeta"
-    ],
-    "composite": true
+    ]
   },
   "exclude": [
     "src/**/*.spec.ts",

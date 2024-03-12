@@ -10,6 +10,7 @@ export class City {
   readonly storage: Storage;
   readonly treasury: Treasury;
   readonly tradingPost: TradingPost;
+  readonly name: string;
 
   get buildingsList() {
     return Object.values(this.buildings);
@@ -21,12 +22,14 @@ export class City {
     storage: Storage;
     treasury: Treasury;
     tradingPost: TradingPost;
+    name: string;
   }) {
     this.citizens = params.citizens;
     this.buildings = params.buildings;
     this.storage = params.storage;
     this.treasury = params.treasury;
     this.tradingPost = params.tradingPost;
+    this.name = params.name;
   }
 
   passDay(currentDay: number) {
