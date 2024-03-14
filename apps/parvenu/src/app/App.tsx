@@ -21,13 +21,13 @@ import {
   FiUserPlus,
   FiUserX,
 } from 'react-icons/fi';
+import { builder } from '../domain/builder';
 import { Brewery } from '../domain/buildings/brewery';
 import { GrainFarm, PGrainFarm } from '../domain/buildings/grain-farm';
 import { productionBuildings } from '../domain/buildings/production-buildings.data';
 import { ProductionSystem } from '../domain/buildings/production.system';
 import { WithProductionSystem } from '../domain/buildings/with-production-system.mixin';
 import { Woodcutter } from '../domain/buildings/woodcutter';
-import { main } from '../domain/main';
 import { Workforce } from '../domain/workforce';
 import Settings from './Settings';
 import useGameLoop from './hooks/useGameLoop';
@@ -36,18 +36,20 @@ import useGamespeed from './hooks/useGamespeed';
 export const App = () => {
   useGameLoop();
   const [time, setTime] = useState(0);
-  const mapRef = useRef(main());
+  const mapRef = useRef(builder());
   const { gamespeed, setGamespeed } = useGamespeed(
     time,
     setTime,
     mapRef.current.world
   );
-  const wares = mapRef.current.cityStorage.wares;
+  const [currentCity, setCurrentCity] = useState('Gdansk');
+  const hamburg = mapRef.current.world.cities[currentCity];
+  const wares = hamburg.storage.wares;
   const player = mapRef.current.world.player;
   const playerStorage = player.storage;
   const playerTreasury = player.treasury;
   const playerWares = playerStorage.wares;
-  const city = mapRef.current.city;
+  const city = hamburg;
   const buildings = city.buildingsList;
   const { citizens, tradingPost } = city;
 
@@ -134,6 +136,10 @@ export const App = () => {
         Day {time} {time !== 0 && time % 7 === 0 ? '(Payday)' : ''}
       </Heading>
       <Settings gamespeed={gamespeed} setGamespeed={setGamespeed} />
+      <HStack>
+        <Button onClick={() => setCurrentCity('Hamburg')}>Hamburg</Button>
+        <Button onClick={() => setCurrentCity('Gdansk')}>Gdanks</Button>
+      </HStack>
 
       <HStack align={'flex-start'} justify={'space-between'} gap={20}>
         <VStack align={'flex-start'}>
@@ -160,9 +166,10 @@ export const App = () => {
           <Tr>
             <Th>Goods</Th>
             <Th>Town</Th>
-            <Th>Buy 1</Th>
+            <Th>Buy one</Th>
             <Th>Buy all</Th>
-            <Th>Sell</Th>
+            <Th>Sell one</Th>
+            <Th>Sell all</Th>
             <Th>You</Th>
           </Tr>
         </Thead>
