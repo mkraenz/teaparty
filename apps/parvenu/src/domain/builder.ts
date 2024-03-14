@@ -1,9 +1,11 @@
+import { CountingHouse } from './buildings/counting-house';
 import { GrainFarm } from './buildings/grain-farm';
 import { ProductionSystem } from './buildings/production.system';
 import { WithProductionSystem } from './buildings/with-production-system.mixin';
 import { Woodcutter } from './buildings/woodcutter';
 import { Citizens } from './citizens';
 import { City } from './city';
+import { FreightForwarder } from './freight-forwarder';
 import { Player } from './player';
 import { Storage } from './storage';
 import { TradingPost } from './trading-post';
@@ -41,8 +43,8 @@ const makeCity = (name: string, player: Player) => {
 };
 
 export const builder = () => {
-  const playerStorage = new Storage();
-  playerStorage.empty();
+  const playerStorage = new Storage('player');
+  // playerStorage.empty();
   const playerTreasury = new Treasury();
   playerTreasury.debit(10000);
   const player = new Player({
@@ -71,17 +73,28 @@ export const builder = () => {
       }),
       upkeepExempt: true,
     });
-  const productionSystem = makeCityProductionSystem();
   const woodcutter = new PWoodCutter({
     owner: 'Hamburg',
-    productionSystem,
+    productionSystem: makeCityProductionSystem(),
   });
   const farm = new PGrainFarm({
     owner: 'Hamburg',
-    productionSystem,
+    productionSystem: makeCityProductionSystem(),
   });
   hamburg.city.build(woodcutter);
   hamburg.city.build(farm);
+
+  const countingHouse = new CountingHouse({
+    storage: new Storage('counting house'),
+    treasury: player.treasury,
+    owner: 'player',
+  });
+  const freightForwarder = new FreightForwarder({
+    targetStorage: countingHouse.storage,
+    sourceStorage: player.storage,
+  });
+
+  freightForwarder.transferInto('wood', 50);
 
   const world = new World({
     cities: {

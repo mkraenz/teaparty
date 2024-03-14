@@ -13,8 +13,8 @@ export class LessThanZeroWorkersError extends Error {
 }
 
 export class Workforce {
-  public maxWorkers: number;
-  public workers: number;
+  maxWorkers: number;
+  workers: number;
   private readonly citizens: Citizens;
 
   constructor(params: {

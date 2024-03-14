@@ -10,9 +10,13 @@ const initialWares: Record<string, number> = {
 };
 
 export class Storage {
-  owner: string = '';
+  readonly owner: string = '';
   /** IMPORTANT: The amount of wares can be floating point numbers. But whenever we show it to the user, we typically display integers for simplicity. */
   wares = { ...initialWares };
+
+  constructor(owner: string = '') {
+    this.owner = owner;
+  }
 
   get waresList() {
     return Object.entries(this.wares).map(([ware, amount]) => ({

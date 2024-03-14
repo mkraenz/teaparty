@@ -5,8 +5,12 @@ export class InsufficientFundsError extends Error {
 }
 
 export class Treasury {
-  owner: string = '';
+  readonly owner: string = '';
   private _balance = 0;
+
+  constructor(owner: string = '') {
+    this.owner = owner;
+  }
 
   get balance() {
     return this._balance;

@@ -115,7 +115,6 @@ export class TradingPost {
 
   buyFromMerchant(ware: string, amount: number = 1) {
     const price = this.getQuoteForBuyingFromMerchant(ware, amount);
-    console.log(price);
     if (this.canBuyFromMerchant(ware, amount)) {
       this.merchantStorage.remove(ware, amount);
       this.cityStorage.add(ware, amount);

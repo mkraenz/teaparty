@@ -141,6 +141,7 @@ export const App = () => {
       <HStack>
         {world.citiesList.map((city) => (
           <Button
+            key={city.name}
             isActive={currentCity === city.name}
             onClick={() => setCurrentCity(city.name)}
           >

@@ -2,8 +2,8 @@ import { Storage } from './storage';
 import { Treasury } from './treasury';
 
 export class Player {
-  treasury: Treasury;
-  storage: Storage;
+  readonly treasury: Treasury;
+  readonly storage: Storage;
 
   constructor(params: { treasury: Treasury; storage: Storage }) {
     this.treasury = params.treasury;
