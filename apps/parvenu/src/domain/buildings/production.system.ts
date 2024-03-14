@@ -14,6 +14,7 @@ export class ProductionSystem {
   private readonly treasury: Treasury;
   /** for paying taxes/upkeep */
   private readonly cityTreasury: Treasury;
+  private readonly upkeepExempt: boolean;
 
   /** @param storage Input resources will be taken from this storage and output products will be delivered to it. */
   constructor(params: {
@@ -21,12 +22,14 @@ export class ProductionSystem {
     workforce: Workforce;
     treasury: Treasury;
     cityTreasury: Treasury;
+    upkeepExempt?: boolean;
   }) {
     this.storage = params.storage;
     this.workforce = params.workforce;
     this.treasury = params.treasury;
     this.cityTreasury = params.cityTreasury;
     this.desiredWorkers = this.workforce.maxWorkers;
+    this.upkeepExempt = params.upkeepExempt ?? false;
   }
 
   init(params: {
@@ -67,6 +70,7 @@ export class ProductionSystem {
   }
 
   payUpkeep() {
+    if (this.upkeepExempt) return;
     this.treasury.credit(this.upkeepCost);
     this.cityTreasury.debit(this.upkeepCost);
   }

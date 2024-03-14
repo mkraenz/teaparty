@@ -11,7 +11,7 @@ import { Treasury } from './treasury';
 import { Workforce } from './workforce';
 import { World } from './world';
 
-const makeCity = (name: string) => {
+const makeCity = (name: string, player: Player) => {
   const storage = new Storage();
   const citizens = new Citizens(storage);
   const treasury = new Treasury();
@@ -28,6 +28,9 @@ const makeCity = (name: string) => {
     buildings: {},
     treasury: treasury,
   });
+
+  tradingPost.setMerchant(player);
+
   return {
     storage,
     citizens,
@@ -38,15 +41,21 @@ const makeCity = (name: string) => {
 };
 
 export const builder = () => {
-  const cityTreasury = new Treasury();
   const playerStorage = new Storage();
   playerStorage.empty();
   const playerTreasury = new Treasury();
   playerTreasury.debit(10000);
-  const hamburg = makeCity('Hamburg');
-  hamburg.city.citizens.beggars = 200;
+  const player = new Player({
+    storage: playerStorage,
+    treasury: playerTreasury,
+  });
 
-  const gdanks = makeCity('Gdansk');
+  const gdanks = makeCity('Gdansk', player);
+  const stockholm = makeCity('Stockholm', player);
+  const edinburgh = makeCity('Edinburgh', player);
+
+  const hamburg = makeCity('Hamburg', player);
+  hamburg.city.citizens.beggars = 200;
 
   const PWoodCutter = WithProductionSystem(Woodcutter);
   const PGrainFarm = WithProductionSystem(GrainFarm);
@@ -54,12 +63,13 @@ export const builder = () => {
     new ProductionSystem({
       cityTreasury: hamburg.city.treasury,
       storage: hamburg.city.storage,
-      treasury: cityTreasury,
+      treasury: hamburg.city.treasury,
       workforce: new Workforce({
         citizens: hamburg.city.citizens,
         maxWorkers: 100,
         workers: 0,
       }),
+      upkeepExempt: true,
     });
   const productionSystem = makeCityProductionSystem();
   const woodcutter = new PWoodCutter({
@@ -73,17 +83,12 @@ export const builder = () => {
   hamburg.city.build(woodcutter);
   hamburg.city.build(farm);
 
-  const player = new Player({
-    storage: playerStorage,
-    treasury: playerTreasury,
-  });
-  hamburg.city.tradingPost.setMerchant(player);
-  gdanks.city.tradingPost.setMerchant(player);
-
   const world = new World({
     cities: {
       [hamburg.city.name]: hamburg.city,
       [gdanks.city.name]: gdanks.city,
+      [stockholm.city.name]: stockholm.city,
+      [edinburgh.city.name]: edinburgh.city,
     },
     player,
   });

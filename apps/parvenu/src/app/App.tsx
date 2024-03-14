@@ -42,14 +42,16 @@ export const App = () => {
     setTime,
     mapRef.current.world
   );
-  const [currentCity, setCurrentCity] = useState('Gdansk');
-  const hamburg = mapRef.current.world.cities[currentCity];
-  const wares = hamburg.storage.wares;
-  const player = mapRef.current.world.player;
+  const [currentCity, setCurrentCity] = useState(
+    mapRef.current.world.citiesList[0].name
+  );
+  const world = mapRef.current.world;
+  const city = world.cities[currentCity];
+  const wares = city.storage.wares;
+  const player = world.player;
   const playerStorage = player.storage;
   const playerTreasury = player.treasury;
   const playerWares = playerStorage.wares;
-  const city = hamburg;
   const buildings = city.buildingsList;
   const { citizens, tradingPost } = city;
 
@@ -137,8 +139,14 @@ export const App = () => {
       </Heading>
       <Settings gamespeed={gamespeed} setGamespeed={setGamespeed} />
       <HStack>
-        <Button onClick={() => setCurrentCity('Hamburg')}>Hamburg</Button>
-        <Button onClick={() => setCurrentCity('Gdansk')}>Gdanks</Button>
+        {world.citiesList.map((city) => (
+          <Button
+            isActive={currentCity === city.name}
+            onClick={() => setCurrentCity(city.name)}
+          >
+            {city.name}
+          </Button>
+        ))}
       </HStack>
 
       <HStack align={'flex-start'} justify={'space-between'} gap={20}>
