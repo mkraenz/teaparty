@@ -10,10 +10,11 @@ import { Player } from './player';
 import { Storage } from './storage';
 import { TradingPost } from './trading-post';
 import { Treasury } from './treasury';
+import { Point } from './types';
 import { Workforce } from './workforce';
 import { World } from './world';
 
-const makeCity = (name: string, player: Player) => {
+const makeCity = (name: string, position: Point, player: Player) => {
   const storage = new Storage();
   const citizens = new Citizens(storage);
   const treasury = new Treasury();
@@ -29,6 +30,7 @@ const makeCity = (name: string, player: Player) => {
     tradingPost,
     buildings: {},
     treasury: treasury,
+    position,
   });
 
   tradingPost.setMerchant(player);
@@ -52,11 +54,11 @@ export const builder = () => {
     treasury: playerTreasury,
   });
 
-  const gdanks = makeCity('Gdansk', player);
-  const stockholm = makeCity('Stockholm', player);
-  const edinburgh = makeCity('Edinburgh', player);
+  const gdanks = makeCity('Gdansk', { x: 1000, y: 800 }, player);
+  const stockholm = makeCity('Stockholm', { x: 1000, y: 120 }, player);
+  const edinburgh = makeCity('Edinburgh', { x: 100, y: 130 }, player);
 
-  const hamburg = makeCity('Hamburg', player);
+  const hamburg = makeCity('Hamburg', { x: 500, y: 850 }, player);
   hamburg.city.citizens.beggars = 200;
 
   const PWoodCutter = WithProductionSystem(Woodcutter);

@@ -3,6 +3,7 @@ import { Citizens } from './citizens';
 import { Storage } from './storage';
 import { TradingPost } from './trading-post';
 import { Treasury } from './treasury';
+import { Point } from './types';
 
 export class City {
   readonly citizens: Citizens;
@@ -11,6 +12,7 @@ export class City {
   readonly treasury: Treasury;
   readonly tradingPost: TradingPost;
   readonly name: string;
+  readonly position: Point;
 
   get buildingsList() {
     return Object.values(this.buildings);
@@ -23,6 +25,7 @@ export class City {
     treasury: Treasury;
     tradingPost: TradingPost;
     name: string;
+    position: Point;
   }) {
     this.citizens = params.citizens;
     this.buildings = params.buildings;
@@ -30,6 +33,7 @@ export class City {
     this.treasury = params.treasury;
     this.tradingPost = params.tradingPost;
     this.name = params.name;
+    this.position = params.position;
   }
 
   passDay(currentDay: number) {
