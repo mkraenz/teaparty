@@ -4,6 +4,7 @@ import { Player } from './player';
 export class World {
   cities: Record<string, City>;
   player: Player;
+  day = 0;
 
   get citiesList() {
     return Object.values(this.cities);
@@ -14,7 +15,8 @@ export class World {
     this.player = params.player;
   }
 
-  passDay(date: number) {
-    this.citiesList.forEach((city) => city.passDay(date));
+  passDay() {
+    this.day++;
+    this.citiesList.forEach((city) => city.passDay(this.day));
   }
 }

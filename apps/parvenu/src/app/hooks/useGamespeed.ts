@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { World } from '../../domain/world';
+import { useSettings } from '../SettingsContext';
 
 const handleKeyPress =
   (setSpeed: (value: number) => void) => (event: KeyboardEvent) => {
@@ -12,37 +13,35 @@ const handleKeyPress =
     if (event.key === '7') setSpeed(100);
   };
 
-const useGamespeed = (
-  initialTime: number,
-  setTime: (newValue: number) => void,
-  world: World
-) => {
-  const timeRef = useRef(initialTime);
-  const [gamespeed, setGamespeed] = useState(1); // 0 = paused, 0.1, 1 = 1 day per second, 2, 3, 10
+const useGamespeed = (world: World) => {
+  const [settings, setSettings] = useSettings();
   useEffect(() => {
     const interval =
-      gamespeed === 0
+      settings.gamespeed === 0
         ? 0
         : window.setInterval(() => {
-            timeRef.current += 1; // i didn't find a better way to ensure access to the up-to-date time without rerunning useEffect
-            setTime(timeRef.current);
-            world.passDay(timeRef.current);
-          }, 1000 / gamespeed);
+            world.passDay();
+          }, 1000 / settings.gamespeed);
     return () => window.clearInterval(interval);
-  }, [gamespeed]);
+  }, [settings.gamespeed]);
   useEffect(() => {
-    const listener = handleKeyPress(setGamespeed);
+    const listener = handleKeyPress((val) =>
+      setSettings({ ...settings, gamespeed: val })
+    );
     window.addEventListener('keydown', listener, false);
     return () => document.removeEventListener('keydown', listener);
-  }, [setGamespeed]);
+  }, [setSettings]);
   const setGameSpeedPolymorph = useCallback(
     (value: number | string) =>
-      setGamespeed(typeof value === 'number' ? value : parseFloat(value)),
-    [setGamespeed]
+      setSettings({
+        ...settings,
+        gamespeed: typeof value === 'number' ? value : parseFloat(value),
+      }),
+    [setSettings, settings]
   );
 
   return {
-    gamespeed,
+    gamespeed: settings.gamespeed,
     setGamespeed: setGameSpeedPolymorph,
   };
 };
