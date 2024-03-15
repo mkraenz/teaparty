@@ -1,19 +1,13 @@
+import { FC } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import CityView from './CityView';
 import WorldMap from './WorldMap';
 
-import { FC } from 'react';
-import { World } from '../domain/world';
-import CityView from './CityView';
-
-type Props = {
-  world: World;
-};
-
-const MyRouter: FC<Props> = ({ world }) => {
+const MyRouter: FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<WorldMap world={world} />} />
-      <Route path="/city/:id" element={<CityView world={world} />} />
+      <Route path="/" element={<WorldMap />} />
+      <Route path="/city/:id" element={<CityView />} />
     </Routes>
   );
 };

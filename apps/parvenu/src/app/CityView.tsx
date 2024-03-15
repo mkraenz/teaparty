@@ -30,17 +30,13 @@ import { ProductionSystem } from '../domain/buildings/production.system';
 import { WithProductionSystem } from '../domain/buildings/with-production-system.mixin';
 import { Woodcutter } from '../domain/buildings/woodcutter';
 import { Workforce } from '../domain/workforce';
-import { World } from '../domain/world';
-import Settings from './Settings';
-import useGamespeed from './hooks/useGamespeed';
+import { useWorld } from './GameProvider';
+import SpeedSettings from './SpeedSettings';
 
-type Props = {
-  world: World;
-};
-
-export const CityView: FC<Props> = ({ world }) => {
-  const { gamespeed, setGamespeed } = useGamespeed(world);
+export const CityView: FC = () => {
+  const world = useWorld();
   const { id } = useParams<{ id: string }>();
+
   const currentCity = id as string;
 
   const city = world.cities[currentCity];
@@ -131,12 +127,8 @@ export const CityView: FC<Props> = ({ world }) => {
 
   return (
     <div>
-      <Heading as="h2">
-        Day {world.day}{' '}
-        {world.day !== 0 && world.day % 7 === 0 ? '(Payday)' : ''}
-      </Heading>
       <IconButton aria-label="Open map" icon={<FiGlobe />} as={Link} to={'/'} />
-      <Settings gamespeed={gamespeed} setGamespeed={setGamespeed} />
+      <SpeedSettings />
 
       <HStack align={'flex-start'} justify={'space-between'} gap={20}>
         <VStack align={'flex-start'}>

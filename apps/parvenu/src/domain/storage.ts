@@ -1,12 +1,12 @@
 import { Need } from './types';
 
 const initialWares: Record<string, number> = {
-  beer: 60,
-  fabric: 60,
-  furs: 60,
-  grain: 60,
-  wine: 60,
-  wood: 60,
+  beer: 0,
+  fabric: 0,
+  furs: 0,
+  grain: 0,
+  wine: 0,
+  wood: 0,
 };
 
 export class Storage {
@@ -55,5 +55,11 @@ export class Storage {
 
   consume(needs: { ware: string; amount: number }[]) {
     needs.forEach((need) => this.remove(need.ware, need.amount));
+  }
+
+  debugFill() {
+    Object.keys(this.wares).forEach((ware) => {
+      this.wares[ware] = 60;
+    });
   }
 }

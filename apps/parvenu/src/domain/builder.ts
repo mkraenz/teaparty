@@ -5,6 +5,8 @@ import { WithProductionSystem } from './buildings/with-production-system.mixin';
 import { Woodcutter } from './buildings/woodcutter';
 import { Citizens } from './citizens';
 import { City } from './city';
+import { cityData } from './city.data';
+import { Convoy } from './convoy';
 import { FreightForwarder } from './freight-forwarder';
 import { Player } from './player';
 import { Storage } from './storage';
@@ -54,11 +56,11 @@ export const builder = () => {
     treasury: playerTreasury,
   });
 
-  const gdanks = makeCity('Gdansk', { x: 1000, y: 800 }, player);
-  const stockholm = makeCity('Stockholm', { x: 1000, y: 120 }, player);
-  const edinburgh = makeCity('Edinburgh', { x: 100, y: 130 }, player);
+  const cities = Object.values(cityData).map((data) =>
+    makeCity(data.name, data.position, player)
+  );
 
-  const hamburg = makeCity('Hamburg', { x: 500, y: 850 }, player);
+  const hamburg = cities.find((city) => city.city.name === 'Hamburg')!;
   hamburg.city.citizens.beggars = 200;
 
   const PWoodCutter = WithProductionSystem(Woodcutter);
@@ -86,25 +88,30 @@ export const builder = () => {
   hamburg.city.build(woodcutter);
   hamburg.city.build(farm);
 
+  cities.forEach((city) => city.storage.debugFill());
+
   const countingHouse = new CountingHouse({
     storage: new Storage('counting house'),
     treasury: player.treasury,
     owner: 'player',
   });
+  const convoy = new Convoy({
+    name: 'Convoy 1',
+    position: { x: 0, y: 0 },
+    storage: new Storage('Convoy 1'),
+  });
+  countingHouse.storage.debugFill();
   const freightForwarder = new FreightForwarder({
     targetStorage: countingHouse.storage,
-    sourceStorage: player.storage,
+    sourceStorage: convoy.storage,
   });
-
-  freightForwarder.transferInto('wood', 50);
+  freightForwarder.transferFrom('wood', 50);
 
   const world = new World({
-    cities: {
-      [hamburg.city.name]: hamburg.city,
-      [gdanks.city.name]: gdanks.city,
-      [stockholm.city.name]: stockholm.city,
-      [edinburgh.city.name]: edinburgh.city,
-    },
+    cities: cities.reduce(
+      (acc, city) => ({ ...acc, [city.city.name]: city.city }),
+      {}
+    ),
     player,
   });
   return {
