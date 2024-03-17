@@ -1,23 +1,37 @@
-export const cityData = {
+import { Point } from './types';
+
+type CityData = {
+  id: string;
+  label: string;
+  pos: Point;
+  beggars?: number;
+};
+
+export const cityData: { [cityName: string]: CityData } = {
   Hamburg: {
-    name: 'Hamburg',
-    position: { x: 535, y: 666 },
+    id: 'hamburg',
+    label: 'Hamburg',
+    pos: { x: 535, y: 666 },
     beggars: 200,
   },
   Gdansk: {
-    name: 'Gdansk',
-    position: { x: 905, y: 603 },
+    id: 'Gdansk',
+    label: 'Gdansk',
+    pos: { x: 905, y: 603 },
   },
   Stockholm: {
-    name: 'Stockholm',
-    position: { x: 905, y: 133 },
+    id: 'Stockholm',
+    label: 'Stockholm',
+    pos: { x: 905, y: 133 },
   },
   Edinburgh: {
-    name: 'Edinburgh',
-    position: { x: 81, y: 290 },
+    id: 'Edinburgh',
+    label: 'Edinburgh',
+    pos: { x: 81, y: 290 },
   },
   London: {
-    name: 'London',
-    position: { x: 115, y: 700 },
+    id: 'London',
+    label: 'London',
+    pos: { x: 115, y: 700 },
   },
 };

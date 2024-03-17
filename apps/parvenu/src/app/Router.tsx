@@ -7,7 +7,7 @@ const MyRouter: FC = () => {
   return (
     <Routes>
       <Route path="/" element={<WorldMap />} />
-      <Route path="/city/:id" element={<CityView />} />
+      <Route path="/cities/:id" element={<CityView />} />
     </Routes>
   );
 };

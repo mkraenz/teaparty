@@ -6,13 +6,14 @@ import { Treasury } from './treasury';
 import { Point } from './types';
 
 export class City {
+  readonly id: string;
+  readonly label: string;
   readonly citizens: Citizens;
   readonly buildings: Record<string, Building>;
   readonly storage: Storage;
   readonly treasury: Treasury;
   readonly tradingPost: TradingPost;
-  readonly name: string;
-  readonly position: Point;
+  readonly pos: Point;
 
   get buildingsList() {
     return Object.values(this.buildings);
@@ -24,16 +25,19 @@ export class City {
     storage: Storage;
     treasury: Treasury;
     tradingPost: TradingPost;
-    name: string;
-    position: Point;
+    label: string;
+    pos: Point;
+    id: string;
   }) {
+    this.id = params.id;
     this.citizens = params.citizens;
     this.buildings = params.buildings;
     this.storage = params.storage;
     this.treasury = params.treasury;
     this.tradingPost = params.tradingPost;
-    this.name = params.name;
-    this.position = params.position;
+    this.id = params.id;
+    this.pos = params.pos;
+    this.label = params.label;
   }
 
   passDay(currentDay: number) {

@@ -32,8 +32,7 @@
     "react-native": "0.72.6",
     "react-redux": "^9.0.4",
     "react-router-dom": "6.11.2",
-    "tslib": "^2.3.0",
-    "tsx": "^4.7.1"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",
@@ -69,6 +68,7 @@
     "@types/react": "18.2.33",
     "@types/react-dom": "18.2.14",
     "@types/redux-mock-store": "^1.0.6",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
     "@vitejs/plugin-react": "^4.2.1",
@@ -107,6 +107,8 @@
     "redux-mock-store": "^1.5.4",
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
+    "tslib": "^2.3.0",
+    "tsx": "^4.7.1",
     "typescript": "~5.2.2",
     "vite": "^5.0.10",
     "vitest": "~0.34.6"

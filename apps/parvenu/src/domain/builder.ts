@@ -16,7 +16,7 @@ import { Point } from './types';
 import { Workforce } from './workforce';
 import { World } from './world';
 
-const makeCity = (name: string, position: Point, player: Player) => {
+const makeCity = (id: string, label: string, pos: Point, player: Player) => {
   const storage = new Storage();
   const citizens = new Citizens(storage);
   const treasury = new Treasury();
@@ -26,13 +26,14 @@ const makeCity = (name: string, position: Point, player: Player) => {
     cityTreasury: treasury,
   });
   const city = new City({
-    name: name,
+    label: label,
     citizens,
     storage: storage,
     tradingPost,
     buildings: {},
     treasury: treasury,
-    position,
+    pos,
+    id,
   });
 
   tradingPost.setMerchant(player);
@@ -57,10 +58,10 @@ export const builder = () => {
   });
 
   const cities = Object.values(cityData).map((data) =>
-    makeCity(data.name, data.position, player)
+    makeCity(data.id, data.label, data.pos, player)
   );
 
-  const hamburg = cities.find((city) => city.city.name === 'Hamburg')!;
+  const hamburg = cities.find((city) => city.city.id === 'hamburg')!;
   hamburg.city.citizens.beggars = 200;
 
   const PWoodCutter = WithProductionSystem(Woodcutter);
@@ -96,10 +97,12 @@ export const builder = () => {
     owner: 'player',
   });
   const convoy = new Convoy({
-    name: 'Convoy 1',
-    position: { x: 0, y: 0 },
+    label: 'Convoy 1',
+    pos: { x: 500, y: 666 },
     storage: new Storage('Convoy 1'),
   });
+  const convoys = [convoy];
+
   countingHouse.storage.debugFill();
   const freightForwarder = new FreightForwarder({
     targetStorage: countingHouse.storage,
@@ -108,11 +111,15 @@ export const builder = () => {
   freightForwarder.transferFrom('wood', 50);
 
   const world = new World({
+    player,
     cities: cities.reduce(
-      (acc, city) => ({ ...acc, [city.city.name]: city.city }),
+      (acc, city) => ({ ...acc, [city.city.id]: city.city }),
       {}
     ),
-    player,
+    convoys: convoys.reduce(
+      (acc, convoy) => ({ ...acc, [convoy.id]: convoy }),
+      {}
+    ),
   });
   return {
     world,

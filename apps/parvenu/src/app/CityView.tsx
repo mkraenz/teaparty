@@ -132,7 +132,7 @@ export const CityView: FC = () => {
 
       <HStack align={'flex-start'} justify={'space-between'} gap={20}>
         <VStack align={'flex-start'}>
-          <Heading as="h2">City {city.name} and its Citizens</Heading>
+          <Heading as="h2">City {city.id} and its Citizens</Heading>
           <List>
             <ListItem>Beggars: {citizens.beggars}</ListItem>
             <ListItem>Poor: {citizens.poor}</ListItem>
