@@ -10,8 +10,7 @@ const SpeedSettings: FC = () => {
   return (
     <HStack justify={'space-between'}>
       <Heading as="h2">
-        Day {world.day}{' '}
-        {world.day !== 0 && world.day % 7 === 0 ? '(Payday)' : ''}
+        Day {world.day} {world.isPayday && '(Payday)'}
       </Heading>
       <RadioGroup onChange={setGamespeed} value={gamespeed.toString()}>
         <HStack>

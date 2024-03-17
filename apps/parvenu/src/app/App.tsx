@@ -1,10 +1,10 @@
 import MyRouter from './Router';
 import { useDisableContextMenu } from './hooks/useDisableContextMenu';
-import useGameLoop from './hooks/useGameLoop';
+import useRenderLoop from './hooks/useGameLoop';
 
 export const App = () => {
   useDisableContextMenu();
-  useGameLoop();
+  useRenderLoop();
   return <MyRouter />;
 };
 

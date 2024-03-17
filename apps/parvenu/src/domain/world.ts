@@ -13,6 +13,10 @@ export class World {
     return Math.floor(this.totaltime / 1000);
   }
 
+  get isPayday() {
+    return this.day !== 0 && this.day % 7 === 0;
+  }
+
   get citiesList() {
     return Object.values(this.cities);
   }

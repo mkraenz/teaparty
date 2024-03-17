@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const useGameLoop = (fps = 60) => {
+const useRenderLoop = (fps = 60) => {
   const [_, forceRerender] = useState(0);
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -10,4 +10,4 @@ const useGameLoop = (fps = 60) => {
   }, [fps]);
 };
 
-export default useGameLoop;
+export default useRenderLoop;
