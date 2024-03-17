@@ -1,20 +1,15 @@
 import { Heading, Table } from '@chakra-ui/react';
 import { FC } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { useWorld } from './GameProvider';
+import { useConvoy } from './GameProvider';
 import ToWorldmapButton from './ToWorldmapButton';
 
-type Props = {};
-
-const ConvoyDetails: FC<Props> = (props) => {
+const ConvoyDetails: FC = () => {
   const { id } = useParams<{ id: string }>();
-  const world = useWorld();
+  const convoy = useConvoy(id);
 
-  if (!id) return <Navigate to="/" />;
+  if (!id || !convoy) return <Navigate to="/" />;
 
-  const convoy = world.convoys[id];
-
-  if (!convoy) return <Navigate to="/" />;
   return (
     <div>
       <ToWorldmapButton />

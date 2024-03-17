@@ -1,25 +1,38 @@
 import { IconButton } from '@chakra-ui/react';
-import { FC } from 'react';
+import { FC, MouseEventHandler } from 'react';
 import { MdSailing } from 'react-icons/md';
-import { Link } from 'react-router-dom';
-import { Point } from '../domain/types';
+import { useNavigate } from 'react-router-dom';
+import { useConvoy } from './GameProvider';
+import { useConvoySelector } from './SelectionProvider';
 
 type Props = {
-  label: string;
   id: string;
-  pos: Point;
 };
 
-const Convoy: FC<Props> = ({ id, label, pos }) => {
+const Convoy: FC<Props> = ({ id }) => {
+  const convoy = useConvoy(id);
+  const nav = useNavigate();
+  const selector = useConvoySelector();
+  if (!convoy) return null;
+  const handleSelect: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+    if (selector.selected === convoy.id) {
+      return nav(`/convoys/${convoy.id}`);
+    } else {
+      selector.setSelected(convoy.id);
+    }
+  };
   return (
     <IconButton
-      as={Link}
-      to={`/convoys/${id}`}
+      onClick={handleSelect}
+      onDoubleClick={() => convoy.setTarget({ x: 115, y: 700 })}
+      // as={Link}
+      // to={`/convoys/${convoy.id}`}
       icon={<MdSailing />}
-      aria-label={label}
+      aria-label={convoy.label}
       pos={'absolute'}
-      top={pos.y}
-      left={pos.x}
+      top={convoy.pos.y}
+      left={convoy.pos.x}
     />
   );
 };

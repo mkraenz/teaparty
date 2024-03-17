@@ -9,6 +9,7 @@ import { cityData } from './city.data';
 import { Convoy } from './convoy';
 import { FreightForwarder } from './freight-forwarder';
 import { Player } from './player';
+import { Ship } from './ship';
 import { Storage } from './storage';
 import { TradingPost } from './trading-post';
 import { Treasury } from './treasury';
@@ -96,10 +97,17 @@ export const builder = () => {
     treasury: player.treasury,
     owner: 'player',
   });
+  const ship = new Ship({
+    owner: 'player',
+    storageCapacity: 100,
+    upkeep: 150,
+    maxSpeed: 5,
+  });
   const convoy = new Convoy({
     label: 'Antti',
     pos: { x: 500, y: 666 },
     storage: new Storage('Antti'),
+    ships: [ship],
   });
   const convoys = [convoy];
 

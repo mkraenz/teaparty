@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { builder } from '../domain/builder';
+import { Convoy } from '../domain/convoy';
 import { World } from '../domain/world';
 
 type Game = {
@@ -34,3 +35,5 @@ export const GameProvider: FC<PropsWithChildren> = ({ children }) => {
 
 export const useGame = () => useContext(GameContext);
 export const useWorld = () => useGame()[0].world;
+export const useConvoy = (id: string | undefined) =>
+  (useWorld().convoys[id ?? ''] || null) as Convoy | null;

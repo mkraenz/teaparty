@@ -8,12 +8,21 @@ type Ship = {
   maxSpeed: number;
 };
 
+export class InvalidConvoyError extends Error {
+  constructor(message: string, convoy: { id: string; label: string }) {
+    super(`convoy id ${convoy.id}, label ${convoy.label}: ${message}`);
+    this.name = 'InvalidConvoyError';
+  }
+}
+
 export class Convoy {
   id: string;
   label: string;
   pos: Point;
   readonly storage: Storage;
-  ships: Ship[] = []; // TODO
+  ships: Ship[];
+
+  target: Point | null = null;
 
   get upkeep() {
     return this.ships.reduce((acc, ship) => acc + ship.upkeep, 0);
@@ -24,9 +33,7 @@ export class Convoy {
    * cf. one-mast Cog (ger: Kogge) with good wind: 5 to 8 knots
    */
   get speedInKnots() {
-    // TIL: Math.max() returns -Infinity for an empty array
-    const speed = Math.max(...this.ships.map((s) => s.maxSpeed));
-    return 5;
+    return Math.max(...this.ships.map((s) => s.maxSpeed));
   }
 
   constructor(params: {
@@ -34,28 +41,43 @@ export class Convoy {
     label: string;
     pos: Point;
     storage: Storage;
+    ships: Ship[];
   }) {
     this.id = params.id ?? v4(); // Note: since we want to be independent of the environment (js vs node), we're not using window.crypto here.
     this.label = params.label;
     this.pos = params.pos;
     this.storage = params.storage;
+    this.ships = params.ships;
+    if (params.ships.length === 0) {
+      throw new InvalidConvoyError('Convoy must have at least one ship', this);
+    }
   }
 
   passTime(delta: number) {
-    // per 1000 delta, move 100 units of length
-    const target2 = { x: 115, y: 700 };
-    const target = Vec2.fromPoint(target2);
-    const pos = Vec2.fromPoint(this.pos);
-    const dir = Vec2.fromPoint(target.sub(pos)).normalize();
-    const diff = dir.mult((this.speedInKnots * delta) / 1000);
-    const veryCloseToTarget = pos.aboutEquals(target, 1);
+    this.move(delta);
+  }
 
-    if (veryCloseToTarget) {
-      this.pos = target2;
-      return;
+  setTarget(target: Point | null = { x: 115, y: 700 }) {
+    this.target = target;
+  }
+
+  move(delta: number) {
+    if (this.target) {
+      // TODO consider moving moving to target into a component
+      const target = Vec2.fromPoint(this.target);
+      const pos = Vec2.fromPoint(this.pos);
+      const dir = Vec2.fromPoint(target.sub(pos)).normalize();
+      const diff = dir.mult((this.speedInKnots * delta) / 100);
+      const veryCloseToTarget = pos.aboutEquals(target, 2);
+
+      if (veryCloseToTarget) {
+        this.pos = target;
+        this.target = null;
+        return;
+      }
+
+      const resultingPos = pos.add(diff);
+      this.pos = resultingPos;
     }
-
-    const resultingPos = pos.add(diff);
-    this.pos = resultingPos;
   }
 }
