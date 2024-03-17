@@ -24,6 +24,7 @@ const Convoy: FC<Props> = ({ id }) => {
       pos={'absolute'}
       top={convoy.pos.y}
       left={convoy.pos.x}
+      isActive={selector.selected === id}
     />
   );
 };

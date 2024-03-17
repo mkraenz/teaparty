@@ -21,7 +21,7 @@ import {
   FiUserPlus,
   FiUserX,
 } from 'react-icons/fi';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { Brewery } from '../domain/buildings/brewery';
 import { GrainFarm, PGrainFarm } from '../domain/buildings/grain-farm';
 import { productionBuildings } from '../domain/buildings/production-buildings.data';
@@ -29,17 +29,17 @@ import { ProductionSystem } from '../domain/buildings/production.system';
 import { WithProductionSystem } from '../domain/buildings/with-production-system.mixin';
 import { Woodcutter } from '../domain/buildings/woodcutter';
 import { Workforce } from '../domain/workforce';
-import { useWorld } from './GameProvider';
+import { useCity, useWorld } from './GameProvider';
 import SpeedSettings from './SpeedSettings';
 import ToWorldmapButton from './ToWorldmapButton';
 
 export const CityDetails: FC = () => {
   const world = useWorld();
   const { id } = useParams<{ id: string }>();
+  const city = useCity(id);
 
-  const currentCity = id as string;
+  if (!city) return <Navigate to="/" />;
 
-  const city = world.cities[currentCity];
   const wares = city.storage.wares;
   const player = world.player;
   const playerStorage = player.storage;

@@ -1,6 +1,6 @@
-import { Button, Heading, Image } from '@chakra-ui/react';
+import { Heading, Image } from '@chakra-ui/react';
 import { FC, MouseEventHandler } from 'react';
-import { Link } from 'react-router-dom';
+import City from './City';
 import Convoy from './Convoy';
 import { useConvoy, useWorld } from './GameProvider';
 import { useConvoySelector } from './SelectionProvider';
@@ -11,27 +11,30 @@ const WorldMap: FC = () => {
   const selection = useConvoySelector();
   const convoy = useConvoy(selection.selected);
   const setConvoyTarget: MouseEventHandler<HTMLDivElement> = (e) => {
-    if (convoy) convoy.setTarget({ x: e.pageX, y: e.pageY }); // TODO: this is absolute position, ideally it should be relative to the map though
+    if (convoy) {
+      convoy.undock();
+      convoy.setTarget({ pos: { x: e.pageX, y: e.pageY } });
+    }
   };
   return (
-    <div
-      onClick={() => selection.setSelected('')}
-      onContextMenu={setConvoyTarget}
-    >
+    <div>
       <SpeedSettings />
-      <Image src="/patrician2-map.jpg" minWidth={1400} />
-      {world.citiesList.map((city) => (
-        <Button
-          key={city.id}
-          pos={'absolute'}
-          top={city.pos.y + 23}
-          left={city.pos.x - 18}
-          as={Link}
-          to={`/cities/${city.id}`}
-        >
-          {city.label}
-        </Button>
-      ))}
+      <Image
+        src="/patrician2-map.jpg"
+        minWidth={1400}
+        onClick={() => selection.setSelected('')}
+        onContextMenu={setConvoyTarget}
+      />
+      {world.citiesList.map((city) => {
+        const onCityContextMenu: MouseEventHandler<HTMLButtonElement> = (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (convoy) convoy.setTarget(city);
+        };
+        return (
+          <City id={city.id} key={city.id} onContextMenu={onCityContextMenu} />
+        );
+      })}
       {world.convoysList.map((convoy) => (
         <Convoy key={convoy.id} id={convoy.id} />
       ))}

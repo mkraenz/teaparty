@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
-import { Vec2 } from './mymath';
+import { City } from './city';
+import { Navigator } from './components/navigator';
 import { Storage } from './storage';
 import { Point } from './types';
 
@@ -21,8 +22,9 @@ export class Convoy {
   pos: Point;
   readonly storage: Storage;
   ships: Ship[];
-
-  target: Point | null = null;
+  target: { pos: Point } | null = null;
+  navigator: Navigator;
+  dockedAt: City | null = null;
 
   get upkeep() {
     return this.ships.reduce((acc, ship) => acc + ship.upkeep, 0);
@@ -42,12 +44,14 @@ export class Convoy {
     pos: Point;
     storage: Storage;
     ships: Ship[];
+    navigator: Navigator;
   }) {
     this.id = params.id ?? v4(); // Note: since we want to be independent of the environment (js vs node), we're not using window.crypto here.
     this.label = params.label;
     this.pos = params.pos;
     this.storage = params.storage;
     this.ships = params.ships;
+    this.navigator = params.navigator;
     if (params.ships.length === 0) {
       throw new InvalidConvoyError('Convoy must have at least one ship', this);
     }
@@ -57,27 +61,23 @@ export class Convoy {
     this.move(delta);
   }
 
-  setTarget(target: Point | null = { x: 115, y: 700 }) {
-    this.target = target;
+  setTarget(target: { pos: Point } | null) {
+    this.navigator.setTarget(target);
   }
 
   move(delta: number) {
-    if (this.target) {
-      // TODO consider moving moving to target into a component
-      const target = Vec2.fromPoint(this.target);
-      const pos = Vec2.fromPoint(this.pos);
-      const dir = Vec2.fromPoint(target.sub(pos)).normalize();
-      const diff = dir.mult((this.speedInKnots * delta) / 100);
-      const veryCloseToTarget = pos.aboutEquals(target, 2);
+    this.navigator.move(delta);
+  }
 
-      if (veryCloseToTarget) {
-        this.pos = target;
-        this.target = null;
-        return;
-      }
+  dock(city: City) {
+    city.port.dock(this);
+    this.dockedAt = city;
+  }
 
-      const resultingPos = pos.add(diff);
-      this.pos = resultingPos;
+  undock() {
+    if (this.dockedAt) {
+      this.dockedAt.port.undock(this);
+      this.dockedAt = null;
     }
   }
 }

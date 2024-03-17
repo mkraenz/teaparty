@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { builder } from '../domain/builder';
+import { City } from '../domain/city';
 import { Convoy } from '../domain/convoy';
 import { World } from '../domain/world';
 
@@ -37,3 +38,5 @@ export const useGame = () => useContext(GameContext);
 export const useWorld = () => useGame()[0].world;
 export const useConvoy = (id: string | undefined) =>
   (useWorld().convoys[id ?? ''] || null) as Convoy | null;
+export const useCity = (id: string | undefined) =>
+  useWorld().cities[id ?? ''] as City | null;

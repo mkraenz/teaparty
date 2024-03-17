@@ -6,9 +6,11 @@ import { Woodcutter } from './buildings/woodcutter';
 import { Citizens } from './citizens';
 import { City } from './city';
 import { cityData } from './city.data';
+import { Navigator } from './components/navigator';
 import { Convoy } from './convoy';
 import { FreightForwarder } from './freight-forwarder';
 import { Player } from './player';
+import { Port } from './port';
 import { Ship } from './ship';
 import { Storage } from './storage';
 import { TradingPost } from './trading-post';
@@ -18,21 +20,24 @@ import { Workforce } from './workforce';
 import { World } from './world';
 
 const makeCity = (id: string, label: string, pos: Point, player: Player) => {
-  const storage = new Storage();
+  const storage = new Storage(id);
   const citizens = new Citizens(storage);
-  const treasury = new Treasury();
+  const treasury = new Treasury(id);
   const tradingPost = new TradingPost({
     citizens,
     cityStorage: storage,
     cityTreasury: treasury,
   });
   const city = new City({
-    label: label,
+    label,
     citizens,
-    storage: storage,
+    storage,
     tradingPost,
     buildings: {},
-    treasury: treasury,
+    treasury,
+    port: new Port({
+      owner: id,
+    }),
     pos,
     id,
   });
@@ -103,12 +108,15 @@ export const builder = () => {
     upkeep: 150,
     maxSpeed: 5,
   });
+  const navigator = new Navigator();
   const convoy = new Convoy({
     label: 'Antti',
     pos: { x: 500, y: 666 },
     storage: new Storage('Antti'),
     ships: [ship],
+    navigator,
   });
+  navigator.setAgent(convoy);
   const convoys = [convoy];
 
   countingHouse.storage.debugFill();

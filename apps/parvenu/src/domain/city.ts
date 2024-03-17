@@ -1,5 +1,6 @@
 import { Building } from './buildings/building';
 import { Citizens } from './citizens';
+import { Port } from './port';
 import { Storage } from './storage';
 import { TradingPost } from './trading-post';
 import { Treasury } from './treasury';
@@ -14,6 +15,7 @@ export class City {
   readonly treasury: Treasury;
   readonly tradingPost: TradingPost;
   readonly pos: Point;
+  readonly port: Port;
 
   get buildingsList() {
     return Object.values(this.buildings);
@@ -25,6 +27,7 @@ export class City {
     storage: Storage;
     treasury: Treasury;
     tradingPost: TradingPost;
+    port: Port;
     label: string;
     pos: Point;
     id: string;
@@ -35,6 +38,7 @@ export class City {
     this.storage = params.storage;
     this.treasury = params.treasury;
     this.tradingPost = params.tradingPost;
+    this.port = params.port;
     this.id = params.id;
     this.pos = params.pos;
     this.label = params.label;
