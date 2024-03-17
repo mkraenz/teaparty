@@ -15,14 +15,13 @@ import {
 } from '@chakra-ui/react';
 import { FC } from 'react';
 import {
-  FiGlobe,
   FiTrash,
   FiUserCheck,
   FiUserMinus,
   FiUserPlus,
   FiUserX,
 } from 'react-icons/fi';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Brewery } from '../domain/buildings/brewery';
 import { GrainFarm, PGrainFarm } from '../domain/buildings/grain-farm';
 import { productionBuildings } from '../domain/buildings/production-buildings.data';
@@ -32,8 +31,9 @@ import { Woodcutter } from '../domain/buildings/woodcutter';
 import { Workforce } from '../domain/workforce';
 import { useWorld } from './GameProvider';
 import SpeedSettings from './SpeedSettings';
+import ToWorldmapButton from './ToWorldmapButton';
 
-export const CityView: FC = () => {
+export const CityDetails: FC = () => {
   const world = useWorld();
   const { id } = useParams<{ id: string }>();
 
@@ -127,7 +127,7 @@ export const CityView: FC = () => {
 
   return (
     <div>
-      <IconButton aria-label="Open map" icon={<FiGlobe />} as={Link} to={'/'} />
+      <ToWorldmapButton />
       <SpeedSettings />
 
       <HStack align={'flex-start'} justify={'space-between'} gap={20}>
@@ -303,4 +303,4 @@ export const CityView: FC = () => {
   );
 };
 
-export default CityView;
+export default CityDetails;

@@ -97,9 +97,9 @@ export const builder = () => {
     owner: 'player',
   });
   const convoy = new Convoy({
-    label: 'Convoy 1',
+    label: 'Antti',
     pos: { x: 500, y: 666 },
-    storage: new Storage('Convoy 1'),
+    storage: new Storage('Antti'),
   });
   const convoys = [convoy];
 

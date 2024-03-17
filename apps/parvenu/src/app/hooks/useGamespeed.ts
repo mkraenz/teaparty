@@ -3,7 +3,6 @@ import { useSettings } from '../SettingsContext';
 
 const handleKeyPress =
   (setSpeed: (value: number) => void) => (event: KeyboardEvent) => {
-    console.log(event.key);
     if (event.key === ' ') setSpeed(0); // space bar
     if (event.key === '1') setSpeed(0.1);
     if (event.key === '2') setSpeed(1);
