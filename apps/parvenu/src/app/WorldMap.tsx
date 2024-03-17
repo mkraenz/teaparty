@@ -8,14 +8,14 @@ import SpeedSettings from './SpeedSettings';
 
 const WorldMap: FC = () => {
   const world = useWorld();
-  const selectedConvoy = useConvoySelector();
-  const convoy = useConvoy(selectedConvoy.selected);
+  const selection = useConvoySelector();
+  const convoy = useConvoy(selection.selected);
   const setConvoyTarget: MouseEventHandler<HTMLDivElement> = (e) => {
     if (convoy) convoy.setTarget({ x: e.pageX, y: e.pageY }); // TODO: this is absolute position, ideally it should be relative to the map though
   };
   return (
     <div
-      onClick={() => selectedConvoy.setSelected('')}
+      onClick={() => selection.setSelected('')}
       onContextMenu={setConvoyTarget}
     >
       <SpeedSettings />
@@ -35,8 +35,8 @@ const WorldMap: FC = () => {
       {world.convoysList.map((convoy) => (
         <Convoy key={convoy.id} id={convoy.id} />
       ))}
-      {selectedConvoy.selected && (
-        <Heading>Selected Convoy {selectedConvoy.selected}</Heading>
+      {selection.selectedConvoy && (
+        <Heading>Selected Convoy {selection.selectedConvoy.label}</Heading>
       )}
     </div>
   );

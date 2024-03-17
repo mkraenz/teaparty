@@ -7,16 +7,20 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Convoy } from '../domain/convoy';
+import { useConvoy } from './GameProvider';
 
 const SelectionContext = createContext<{
   /** id of the selected convoy */
   selected: string;
   setSelected: (id: string) => void;
   setSelectedWithNavEffect: (id: string) => void;
+  selectedConvoy: Convoy | null;
 }>({
   selected: '',
   setSelected: () => {},
   setSelectedWithNavEffect: () => {},
+  selectedConvoy: null,
 });
 
 export const SelectionProvider: FC<
@@ -24,6 +28,7 @@ export const SelectionProvider: FC<
 > = ({ children }) => {
   const nav = useNavigate();
   const [selected, setSelected] = useState('');
+  const convoy = useConvoy(selected);
   const [selectionTime, setSelectionTime] = useState(0);
 
   const setSelectedWithNavEffect = useCallback(
@@ -40,7 +45,12 @@ export const SelectionProvider: FC<
 
   return (
     <SelectionContext.Provider
-      value={{ selected, setSelected, setSelectedWithNavEffect }}
+      value={{
+        selected,
+        setSelected,
+        setSelectedWithNavEffect,
+        selectedConvoy: convoy,
+      }}
     >
       {children}
     </SelectionContext.Provider>
