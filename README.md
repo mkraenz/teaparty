@@ -27,12 +27,19 @@ pnpm exec nx serve parvenu
 #### Type check
 
 ```sh
+# from repository root
+pnpm exec nx run-many --target=typecheck
+pnpm exec nx typecheck parvenu
+# watch mode
+pnpm exec nx typecheck parvenu --watch
+
+# alternatively, simply build the app
 pnpm exec nx build <app name>
 ```
 
 #### Installing libraries
 
-This repository uses the single-version policy. Meaning that all packages share their dependencies. To install a package, you need to run pnpm install <lib> from repository root (not from apps/<app name>!).
+This repository uses the single-version policy. Meaning that all packages share their dependencies. To install a package, you need to run `pnpm install <lib>` from repository root (not from `apps/<app name>`!).
 
 ```sh
 # from repository root
