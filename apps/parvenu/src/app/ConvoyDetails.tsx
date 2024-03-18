@@ -1,8 +1,8 @@
 import { Heading, Table } from '@chakra-ui/react';
 import { FC } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { useConvoy } from './GameProvider';
-import ToWorldmapButton from './ToWorldmapButton';
+import ToWorldmapButton from './common/ToWorldmapButton';
+import { useConvoy } from './general/GameProvider';
 
 const ConvoyDetails: FC = () => {
   const { id } = useParams<{ id: string }>();

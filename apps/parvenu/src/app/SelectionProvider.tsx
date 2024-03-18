@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Convoy } from '../domain/convoy';
-import { useConvoy } from './GameProvider';
+import { useConvoy } from './general/GameProvider';
 
 const SelectionContext = createContext<{
   /** id of the selected convoy */

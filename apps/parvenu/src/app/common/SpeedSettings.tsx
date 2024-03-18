@@ -1,7 +1,7 @@
 import { HStack, Heading, Radio, RadioGroup } from '@chakra-ui/react';
 import { FC } from 'react';
-import { useWorld } from './GameProvider';
-import useGamespeed from './hooks/useGamespeed';
+import { useWorld } from '../general/GameProvider';
+import useGamespeed from '../hooks/useGamespeed';
 
 const SpeedSettings: FC = () => {
   const world = useWorld();

@@ -1,8 +1,8 @@
 import { IconButton } from '@chakra-ui/react';
 import { FC, MouseEventHandler } from 'react';
 import { MdSailing } from 'react-icons/md';
-import { useConvoy } from './GameProvider';
-import { useConvoySelector } from './SelectionProvider';
+import { useConvoySelector } from '../SelectionProvider';
+import { useConvoy } from '../general/GameProvider';
 
 type Props = {
   id: string;

@@ -5,10 +5,10 @@ import {
   useContext,
   useState,
 } from 'react';
-import { builder } from '../domain/builder';
-import { City } from '../domain/city';
-import { Convoy } from '../domain/convoy';
-import { World } from '../domain/world';
+import { builder } from '../../domain/builder';
+import { City } from '../../domain/city';
+import { Convoy } from '../../domain/convoy';
+import { World } from '../../domain/world';
 
 type Game = {
   world: World;

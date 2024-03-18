@@ -1,4 +1,4 @@
-import MyRouter from './Router';
+import MyRouter from './general/Router';
 import { useDisableContextMenu } from './hooks/useDisableContextMenu';
 import useRenderLoop from './hooks/useGameLoop';
 

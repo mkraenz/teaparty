@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useSettings } from '../SettingsContext';
+import { useSettings } from '../general/SettingsContext';
 
 const handleKeyPress =
   (setSpeed: (value: number) => void) => (event: KeyboardEvent) => {

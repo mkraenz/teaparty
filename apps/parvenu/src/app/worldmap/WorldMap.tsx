@@ -1,10 +1,10 @@
 import { Heading, Image } from '@chakra-ui/react';
 import { FC, MouseEventHandler } from 'react';
+import { useConvoySelector } from '../SelectionProvider';
+import SpeedSettings from '../common/SpeedSettings';
+import { useConvoy, useWorld } from '../general/GameProvider';
 import City from './City';
 import Convoy from './Convoy';
-import { useConvoy, useWorld } from './GameProvider';
-import { useConvoySelector } from './SelectionProvider';
-import SpeedSettings from './SpeedSettings';
 
 const WorldMap: FC = () => {
   const world = useWorld();

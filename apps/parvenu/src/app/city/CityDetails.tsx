@@ -22,16 +22,16 @@ import {
   FiUserX,
 } from 'react-icons/fi';
 import { Navigate, useParams } from 'react-router-dom';
-import { Brewery } from '../domain/buildings/brewery';
-import { GrainFarm, PGrainFarm } from '../domain/buildings/grain-farm';
-import { productionBuildings } from '../domain/buildings/production-buildings.data';
-import { ProductionSystem } from '../domain/buildings/production.system';
-import { WithProductionSystem } from '../domain/buildings/with-production-system.mixin';
-import { Woodcutter } from '../domain/buildings/woodcutter';
-import { Workforce } from '../domain/workforce';
-import { useCity, useWorld } from './GameProvider';
-import SpeedSettings from './SpeedSettings';
-import ToWorldmapButton from './ToWorldmapButton';
+import { Brewery } from '../../domain/buildings/brewery';
+import { GrainFarm, PGrainFarm } from '../../domain/buildings/grain-farm';
+import { productionBuildings } from '../../domain/buildings/production-buildings.data';
+import { ProductionSystem } from '../../domain/buildings/production.system';
+import { WithProductionSystem } from '../../domain/buildings/with-production-system.mixin';
+import { Woodcutter } from '../../domain/buildings/woodcutter';
+import { Workforce } from '../../domain/workforce';
+import SpeedSettings from '../common/SpeedSettings';
+import ToWorldmapButton from '../common/ToWorldmapButton';
+import { useCity, useWorld } from '../general/GameProvider';
 
 export const CityDetails: FC = () => {
   const world = useWorld();
