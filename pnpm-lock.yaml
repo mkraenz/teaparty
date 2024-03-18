@@ -53,6 +53,9 @@ dependencies:
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
+  navmesh:
+    specifier: ^2.3.1
+    version: 2.3.1
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -7929,6 +7932,11 @@ packages:
     dependencies:
       browserslist: 4.22.2
 
+  /core-js@3.36.0:
+    resolution: {integrity: sha512-mt7+TUBbTFg5+GngsAxeKBTl5/VS0guFeJacYge9OmHb+m058UwwIm41SE9T4Den7ClatV57B6TYTuJ0CX1MAw==}
+    requiresBuild: true
+    dev: false
+
   /core-util-is@1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
     dev: true
@@ -12210,6 +12218,13 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
+  /navmesh@2.3.1:
+    resolution: {integrity: sha512-psNjH0lNJbprtlTNo4gmhqIgNhZxQgxiGtnGAOmtL7I/tByoGfAfDX+/LD/5b26XuLZw3XXTr0+tHScnm5MBWw==}
+    dependencies:
+      core-js: 3.36.0
+      javascript-astar: github.com/mikewesthad/javascript-astar/c0304b12861eda334e27f2f15d701c10b296593f
+    dev: false
+
   /ncp@2.0.0:
     resolution: {integrity: sha512-zIdGUrPRFTUELUvr3Gmc7KZ2Sw/h1PiVM0Af/oHB6zgnV1ikqSfRk+TOufi79aHYCW3NiOXmr1BP5nWbzojLaA==}
     hasBin: true
@@ -15462,3 +15477,9 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
     dev: true
+
+  github.com/mikewesthad/javascript-astar/c0304b12861eda334e27f2f15d701c10b296593f:
+    resolution: {tarball: https://codeload.github.com/mikewesthad/javascript-astar/tar.gz/c0304b12861eda334e27f2f15d701c10b296593f}
+    name: javascript-astar
+    version: 0.4.2
+    dev: false
