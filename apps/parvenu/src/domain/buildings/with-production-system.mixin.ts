@@ -1,5 +1,6 @@
 import { ProductionSystem } from './production.system';
 
+/* eslint-disable-next-line @typescript-eslint/ban-types  */
 type GConstructor<T = {}> = new (...args: any[]) => T;
 
 type HasProductionSystem = GConstructor<{ productionSystem: ProductionSystem }>;

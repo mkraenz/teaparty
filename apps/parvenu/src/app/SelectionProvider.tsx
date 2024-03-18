@@ -40,7 +40,7 @@ export const SelectionProvider: FC<
       }
       setSelectionTime(Date.now());
     },
-    [selectionTime]
+    [selectionTime, nav]
   );
 
   return (

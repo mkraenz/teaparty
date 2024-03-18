@@ -59,7 +59,7 @@ export const SettingsProvider: FC<PropsWithChildren<{ logicFps?: number }>> = ({
       }
     }, logicFps / settings.gamespeed);
     return () => window.clearInterval(interval);
-  }, [settings.gamespeed]);
+  }, [settings.gamespeed, logicFps]);
 
   useEffect(() => {
     if (paused.current) return;
@@ -81,7 +81,6 @@ export const SettingsProvider: FC<PropsWithChildren<{ logicFps?: number }>> = ({
     [setSettings, settings.gamespeed]
   );
   return (
-    // TODO expose as object
     <SettingsContext.Provider
       value={{ settings, setSettings, setGamespeed, delta }}
     >

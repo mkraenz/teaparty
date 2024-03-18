@@ -22,7 +22,7 @@ const useGamespeed = () => {
   const setGameSpeedPolymorph = useCallback(
     (value: number | string) =>
       setGamespeed(typeof value === 'number' ? value : parseFloat(value)),
-    [settings, setGamespeed]
+    [setGamespeed]
   );
 
   return {

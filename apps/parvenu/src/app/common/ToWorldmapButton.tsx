@@ -3,9 +3,7 @@ import { FC } from 'react';
 import { FiGlobe } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
-type Props = {};
-
-const ToWorldmapButton: FC<Props> = (props) => {
+const ToWorldmapButton: FC = () => {
   return (
     <IconButton aria-label="Open map" icon={<FiGlobe />} as={Link} to={'/'} />
   );
