@@ -15,8 +15,8 @@ const City: FC<Props> = ({ id, onContextMenu }) => {
     <Button
       key={city.id}
       pos={'absolute'}
-      top={city.pos.y + 23}
-      left={city.pos.x - 18}
+      top={city.pos.y}
+      left={city.pos.x}
       as={Link}
       to={`/cities/${city.id}`}
       onContextMenu={onContextMenu}

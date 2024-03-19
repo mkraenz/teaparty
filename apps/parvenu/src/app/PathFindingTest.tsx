@@ -25,7 +25,7 @@ const Rect: FC<{
 };
 
 const PathFindingTest: FC<Props> = (props) => {
-  /** 1 = walkable */
+  /** value of 1 in the matrix means walkable */
   const map = navmeshMatrix;
   const tilesize = 1;
   const [from, setFrom] = useState({ x: 20, y: 5 });
@@ -34,7 +34,6 @@ const PathFindingTest: FC<Props> = (props) => {
   const path = useMemo(() => {
     // const polys = buildPolysFromGridMap(map, tilesize, tilesize); // the tile size is how small the smallest rectangle is.
     const polys = navmeshPolygons;
-    // TODO: export the polys to a file instead of recalculating them
     const navMesh = new NavMesh(polys);
     const path = navMesh.findPath(from, to);
     console.log(

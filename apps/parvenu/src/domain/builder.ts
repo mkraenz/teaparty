@@ -111,7 +111,7 @@ export const builder = () => {
   const navigator = new Navigator();
   const convoy = new Convoy({
     label: 'Antti',
-    pos: { x: 500, y: 666 },
+    pos: { x: 100, y: 100 },
     storage: new Storage('Antti'),
     ships: [ship],
     navigator,

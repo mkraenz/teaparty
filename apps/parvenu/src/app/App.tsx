@@ -4,7 +4,7 @@ import useRenderLoop from './hooks/useGameLoop';
 
 export const App = () => {
   useDisableContextMenu();
-  // useRenderLoop();
+  useRenderLoop();
   return <MyRouter />;
 };
 

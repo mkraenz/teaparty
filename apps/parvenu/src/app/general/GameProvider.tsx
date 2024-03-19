@@ -1,3 +1,4 @@
+import { NavMesh } from 'navmesh';
 import {
   FC,
   PropsWithChildren,
@@ -9,23 +10,24 @@ import { builder } from '../../domain/builder';
 import { City } from '../../domain/city';
 import { Convoy } from '../../domain/convoy';
 import { World } from '../../domain/world';
+import navmeshPolygons from '../navmesh-polygons.json';
 
 type Game = {
   world: World;
-};
-
-const defaultGame: Game = {
-  // @ts-expect-error - this is a placeholder
-  world: null,
+  navmesh: NavMesh;
 };
 
 const GameContext = createContext<[Game, (game: Game) => void]>([
-  defaultGame,
+  // @ts-expect-error -- no need to mess with the default
+  null,
   () => {},
 ]);
 
 export const GameProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [game, setGame] = useState(builder());
+  const [game, setGame] = useState({
+    ...builder(),
+    navmesh: new NavMesh(navmeshPolygons), // TODO: do we need to call remove() to clean up to avoid memory leaks?
+  });
 
   return (
     <GameContext.Provider value={[game, setGame]}>
