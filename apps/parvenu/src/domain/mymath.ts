@@ -1,6 +1,14 @@
 import { Point } from './types';
 
 export class Vec2 {
+  static totalPathLength(path: Point[]) {
+    return path.reduce((total, point, index, path) => {
+      if (index === 0) return total;
+      const prevPoint = path[index - 1];
+      return total + Vec2.fromPoint(point).distance(Vec2.fromPoint(prevPoint));
+    }, 0);
+  }
+
   x: number;
   y: number;
 
@@ -86,5 +94,10 @@ export class Vec2 {
 
   toJSON() {
     return { x: this.x, y: this.y };
+  }
+
+  lerp(from: Vec2, lambda: number) {
+    // (1 - lambda) * this + lambda * from
+    return this.mult(lambda).add(from.mult(1 - lambda));
   }
 }
