@@ -33,8 +33,14 @@ export class Navigator {
     this.target = target;
   }
 
-  setPath(path: Point[]) {
+  setPath(path: Point[] | null) {
+    if (path === null) {
+      this.path = null;
+      return;
+    }
+
     if (path.length < 2) throw new Error('Path must have at least two point');
+
     const internalPath = path
       .map((point, i) => {
         return {

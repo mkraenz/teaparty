@@ -9,6 +9,9 @@ export class World {
   /** one second outgame is one day ingame. */
   totaltime = 0;
 
+  private convoyListCache: Convoy[] = [];
+  private cityListCache: City[] = [];
+
   get day() {
     return Math.floor(this.totaltime / 1000);
   }
@@ -18,11 +21,11 @@ export class World {
   }
 
   get citiesList() {
-    return Object.values(this.cities);
+    return this.cityListCache;
   }
 
   get convoysList() {
-    return Object.values(this.convoys);
+    return this.convoyListCache;
   }
 
   constructor(params: {
@@ -33,6 +36,12 @@ export class World {
     this.cities = params.cities;
     this.player = params.player;
     this.convoys = params.convoys;
+    this.updateCache();
+  }
+
+  private updateCache() {
+    this.convoyListCache = Object.values(this.convoys);
+    this.cityListCache = Object.values(this.cities);
   }
 
   passDay() {
@@ -51,5 +60,6 @@ export class World {
 
   addConvoy(convoy: Convoy) {
     this.convoys[convoy.id] = convoy;
+    this.updateCache();
   }
 }

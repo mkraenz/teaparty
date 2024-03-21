@@ -57,7 +57,7 @@ export const SettingsProvider: FC<PropsWithChildren<{ logicFps?: number }>> = ({
         setDelta((Date.now() - lastUpdateTime.current) * settings.gamespeed);
         lastUpdateTime.current = Date.now();
       }
-    }, logicFps / settings.gamespeed);
+    }, 1000 / logicFps);
     return () => window.clearInterval(interval);
   }, [settings.gamespeed, logicFps]);
 

@@ -65,7 +65,7 @@ export class Convoy {
     this.navigator.setTarget(target);
   }
 
-  setPath(path: Point[]) {
+  setPath(path: Point[] | null) {
     this.navigator.setPath(path);
   }
 

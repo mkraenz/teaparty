@@ -28,6 +28,7 @@ const WorldMap: FC = () => {
       const path = findPath(convoy.pos, convoy.navigator.target.pos);
       console.log('path', path);
       if (path) convoy.setPath(path);
+      else convoy.setPath(null);
     }
   };
   return (

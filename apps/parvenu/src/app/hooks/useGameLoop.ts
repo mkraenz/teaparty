@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const useRenderLoop = (fps = 60) => {
+const useRenderLoop = (fps = 30) => {
   const [_, forceRerender] = useState(0);
   useEffect(() => {
     const interval = window.setInterval(() => {
