@@ -21,10 +21,6 @@ const WorldMap: FC = () => {
       convoy.undock();
       convoy.setTarget({ pos: { x, y } });
       if (!convoy.navigator.target?.pos) return;
-      console.log(
-        navmesh.isPointInMesh(convoy.pos),
-        convoy.navigator.target.pos
-      );
       const path = findPath(convoy.pos, convoy.navigator.target.pos);
       console.log('path', path);
       if (path) convoy.setPath(path);
@@ -52,6 +48,7 @@ const WorldMap: FC = () => {
             e.stopPropagation();
             e.preventDefault();
             if (convoy) convoy.setTarget(city);
+            // TODO setpath
           };
           return (
             <City

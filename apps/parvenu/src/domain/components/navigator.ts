@@ -2,6 +2,8 @@ import { City } from '../city';
 import { Vec2 } from '../mymath';
 import { Point } from '../types';
 
+const MIN_EUCLIDEAN_DIST_TO_TARGET_TO_STOP = 2;
+
 type Agent = {
   pos: Point;
   speedInKnots: number;
@@ -70,6 +72,7 @@ export class Navigator {
       length: Vec2.totalPathLength(path),
     };
     this.nextPointIndexInPath = 1;
+    this.lengthTravelled = 0;
   }
 
   /** linear interpolation along path */
@@ -111,20 +114,27 @@ export class Navigator {
 
       this.agent.pos = nextPos;
 
-      // handle arrival
       const pos = Vec2.fromPoint(this.agent.pos);
       const targetPos = Vec2.fromPoint(target.pos);
-      const veryCloseToTarget = pos.aboutEquals(targetPos, 2); // random distance of 2? what's the best number to use here? what does it mean to be '2' close?
+      const veryCloseToTarget =
+        pos.aboutEquals(targetPos, MIN_EUCLIDEAN_DIST_TO_TARGET_TO_STOP) ||
+        this.lengthTravelled > path.length;
 
       if (veryCloseToTarget) {
         this.agent.pos = targetPos;
-        this.target = null;
-        this.path = null;
         if (target instanceof City) {
           this.agent.dock(target);
         }
+        this.reset();
         return;
       }
     }
+  }
+
+  reset() {
+    this.lengthTravelled = 0;
+    this.nextPointIndexInPath = 1;
+    this.target = null;
+    this.path = null;
   }
 }
