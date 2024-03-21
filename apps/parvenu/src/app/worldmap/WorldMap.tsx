@@ -1,5 +1,6 @@
 import { Heading } from '@chakra-ui/react';
 import { FC, MouseEventHandler } from 'react';
+import { City as ICity } from '../../domain/city';
 import { useConvoySelector } from '../SelectionProvider';
 import SpeedSettings from '../common/SpeedSettings';
 import { useConvoy, useWorld } from '../general/GameProvider';
@@ -10,23 +11,44 @@ import Convoy from './Convoy';
 const WorldMap: FC = () => {
   const world = useWorld();
   const selection = useConvoySelector();
-  const { findPath, navmesh } = usePathfinding();
+  const { findPath } = usePathfinding();
   const convoy = useConvoy(selection.selected);
-  const setConvoyTarget: MouseEventHandler<HTMLDivElement> = (e) => {
-    var rect = e.currentTarget.getBoundingClientRect();
-    var x = e.clientX - rect.left; //x position within the element.
-    var y = e.clientY - rect.top; //y position within the element.
-    console.log({ x, y });
-    if (convoy) {
-      convoy.undock();
-      convoy.setTarget({ pos: { x, y } });
-      if (!convoy.navigator.target?.pos) return;
-      const path = findPath(convoy.pos, convoy.navigator.target.pos);
-      console.log('path', path);
-      if (path) convoy.setPath(path);
-      else convoy.setPath(null);
+  const setConvoyTargetLandOrWater: MouseEventHandler<HTMLDivElement> = (e) => {
+    if (!convoy) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left; // position within the map.
+    const y = e.clientY - rect.top;
+
+    const targetPos = { x, y };
+    const path = findPath(convoy.pos, targetPos);
+    if (!path) {
+      convoy.halt();
+      return;
     }
+    convoy.setPath(path);
+    convoy.setTarget({ pos: targetPos });
+    if (convoy.dockedAt) convoy.undock();
   };
+  const onCityContextMenu =
+    (city: ICity): MouseEventHandler<HTMLButtonElement> =>
+    (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (!convoy) return;
+      if (convoy.dockedAt === city) return; // already docked. no need to move
+
+      const targetPos = city.pos;
+      const path = findPath(convoy.pos, targetPos);
+      if (!path) {
+        // arguably this shouldn't be possible by design of the map and its navmesh, but we might want to allow custom maps
+        convoy.halt();
+        return;
+      }
+      convoy.setPath(path);
+      convoy.setTarget(city);
+      if (convoy.dockedAt) convoy.undock();
+    };
   return (
     <div>
       <SpeedSettings />
@@ -39,22 +61,14 @@ const WorldMap: FC = () => {
           // zoom: 2 // TODO: not working with mouse click position, but browser zoom works
         }}
         onClick={() => selection.setSelected('')}
-        onContextMenu={setConvoyTarget}
+        onContextMenu={setConvoyTargetLandOrWater}
       >
         {world.citiesList.map((city) => {
-          const onCityContextMenu: MouseEventHandler<HTMLButtonElement> = (
-            e
-          ) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (convoy) convoy.setTarget(city);
-            // TODO setpath
-          };
           return (
             <City
               id={city.id}
               key={city.id}
-              onContextMenu={onCityContextMenu}
+              onContextMenu={onCityContextMenu(city)}
             />
           );
         })}

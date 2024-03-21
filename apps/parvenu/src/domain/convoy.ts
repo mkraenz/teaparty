@@ -61,6 +61,11 @@ export class Convoy {
     this.move(delta);
   }
 
+  halt() {
+    this.setPath(null);
+    this.setTarget(null);
+  }
+
   setTarget(target: { pos: Point } | null) {
     this.navigator.setTarget(target);
   }

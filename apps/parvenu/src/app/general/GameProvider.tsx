@@ -4,6 +4,7 @@ import {
   PropsWithChildren,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from 'react';
 import { builder } from '../../domain/builder';
@@ -28,6 +29,10 @@ export const GameProvider: FC<PropsWithChildren> = ({ children }) => {
     ...builder(),
     navmesh: new NavMesh(navmeshPolygons), // TODO: do we need to call remove() to clean up to avoid memory leaks?
   });
+
+  useEffect(() => {
+    (window as any).game = game;
+  }, []);
 
   return (
     <GameContext.Provider value={[game, setGame]}>

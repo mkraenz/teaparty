@@ -27,7 +27,7 @@ export const cityData: { [cityName: string]: CityData } = {
   Edinburgh: {
     id: 'Edinburgh',
     label: 'Edinburgh',
-    pos: { x: 6, y: 130 },
+    pos: { x: 42, y: 127 },
   },
   London: {
     id: 'London',
