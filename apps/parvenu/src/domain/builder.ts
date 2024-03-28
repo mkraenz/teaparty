@@ -104,7 +104,7 @@ export const builder = () => {
   });
   const ship = new Ship({
     owner: 'player',
-    storageCapacity: 100,
+    cargoCapacity: 100,
     upkeep: 150,
     maxSpeed: 5,
   });
@@ -113,6 +113,7 @@ export const builder = () => {
     label: 'Antti',
     pos: { x: 100, y: 100 },
     storage: new Storage('Antti'),
+    treasury: playerTreasury,
     ships: [ship],
     navigator,
   });

@@ -3,19 +3,19 @@ import { v4 } from 'uuid';
 export class Ship {
   readonly id: string;
   owner: string;
-  storageCapacity: number;
+  cargoCapacity: number;
   upkeep: number;
   maxSpeed: number;
 
   constructor(params: {
     id?: string;
     owner: string;
-    storageCapacity: number;
+    cargoCapacity: number;
     upkeep: number;
     maxSpeed: number;
   }) {
     this.owner = params.owner;
-    this.storageCapacity = params.storageCapacity;
+    this.cargoCapacity = params.cargoCapacity;
     this.id = params.id ?? v4();
     this.upkeep = params.upkeep;
     this.maxSpeed = params.maxSpeed;
@@ -25,7 +25,7 @@ export class Ship {
     return {
       id: this.id,
       owner: this.owner,
-      storageCapacity: this.storageCapacity,
+      cargoCapacity: this.cargoCapacity,
     };
   }
 }

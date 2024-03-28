@@ -2,11 +2,13 @@ import { v4 } from 'uuid';
 import { City } from './city';
 import { Navigator } from './components/navigator';
 import { Storage } from './storage';
+import { Treasury } from './treasury';
 import { Point } from './types';
 
 type Ship = {
   upkeep: number;
   maxSpeed: number;
+  cargoCapacity: number;
 };
 
 export class InvalidConvoyError extends Error {
@@ -21,6 +23,7 @@ export class Convoy {
   label: string;
   pos: Point;
   readonly storage: Storage;
+  readonly treasury: Treasury;
   ships: Ship[];
   target: { pos: Point } | null = null;
   navigator: Navigator;
@@ -38,11 +41,20 @@ export class Convoy {
     return Math.max(...this.ships.map((s) => s.maxSpeed));
   }
 
+  get totalCargoCapacity() {
+    return this.ships.reduce((acc, ship) => acc + ship.cargoCapacity, 0);
+  }
+
+  get usedCargoCapacity() {
+    return this.storage.usedCapacity;
+  }
+
   constructor(params: {
     id?: string;
     label: string;
     pos: Point;
     storage: Storage;
+    treasury: Treasury;
     ships: Ship[];
     navigator: Navigator;
   }) {
@@ -50,6 +62,7 @@ export class Convoy {
     this.label = params.label;
     this.pos = params.pos;
     this.storage = params.storage;
+    this.treasury = params.treasury;
     this.ships = params.ships;
     this.navigator = params.navigator;
     if (params.ships.length === 0) {

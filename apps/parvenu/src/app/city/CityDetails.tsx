@@ -5,15 +5,29 @@ import {
   IconButton,
   List,
   ListItem,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Radio,
+  RadioGroup,
   Table,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
   VStack,
+  useColorModeValue,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { FC } from 'react';
+import { isEmpty, toInteger } from 'lodash';
+import { FC, useEffect, useState } from 'react';
 import {
   FiTrash,
   FiUserCheck,
@@ -28,10 +42,214 @@ import { productionBuildings } from '../../domain/buildings/production-buildings
 import { ProductionSystem } from '../../domain/buildings/production.system';
 import { WithProductionSystem } from '../../domain/buildings/with-production-system.mixin';
 import { Woodcutter } from '../../domain/buildings/woodcutter';
+import { City } from '../../domain/city';
+import { Convoy } from '../../domain/convoy';
 import { Workforce } from '../../domain/workforce';
 import SpeedSettings from '../common/SpeedSettings';
 import ToWorldmapButton from '../common/ToWorldmapButton';
 import { useCity, useWorld } from '../general/GameProvider';
+
+const CitizenDetails: FC<{ city: City }> = ({ city }) => {
+  const citizens = city.citizens;
+  return (
+    <VStack align={'flex-start'}>
+      <Heading as="h2">City {city.label} and its Citizens</Heading>
+      <List>
+        <ListItem>Beggars: {citizens.beggars}</ListItem>
+        <ListItem>Poor: {citizens.poor}</ListItem>
+        <ListItem>Middle: {citizens.middle}</ListItem>
+        <ListItem>Rich: {citizens.rich}</ListItem>
+        <ListItem>{city.treasury.balance} Gold</ListItem>
+      </List>
+    </VStack>
+  );
+};
+
+const Port: FC<{ city: City }> = ({ city }) => {
+  const hoverColor = useColorModeValue('gray.300', 'gray.700');
+  const [selected, setSelected] = useState<Convoy | null>(null);
+  const tradingPost = useDisclosure();
+  return (
+    <VStack align={'flex-start'}>
+      <Heading as="h2">Port</Heading>
+      <List width={'100%'}>
+        {isEmpty(city.port.convoys) && <ListItem>No convoys docked.</ListItem>}
+        {Object.values(city.port.convoys).map((convoy) => (
+          <ListItem
+            key={convoy.id}
+            cursor={'pointer'}
+            onClick={() => {
+              setSelected(convoy);
+              tradingPost.onOpen();
+            }}
+            _hover={{ backgroundColor: hoverColor }}
+          >
+            {convoy.label} - {convoy.usedCargoCapacity}
+            {' / '}
+            {convoy.totalCargoCapacity} cargo
+          </ListItem>
+        ))}
+      </List>
+      {selected && (
+        <TradingPostOverlay
+          city={city}
+          convoy={selected}
+          visible={tradingPost.isOpen}
+          onClose={tradingPost.onClose}
+        />
+      )}
+    </VStack>
+  );
+};
+
+const TradingAmountSelector: FC<{
+  setAmountTraded: (n: number) => void;
+  amountTraded: number;
+}> = ({ amountTraded, setAmountTraded }) => {
+  return (
+    <RadioGroup
+      onChange={(n) => setAmountTraded(toInteger(n))}
+      value={amountTraded.toString()}
+    >
+      <HStack>
+        <Radio value={'1'}>1</Radio>
+        <Radio value={'5'}>5</Radio>
+        <Radio value={'50'}>50</Radio>
+      </HStack>
+    </RadioGroup>
+  );
+};
+
+const TradingPostOverlay: FC<{
+  city: City;
+  convoy: Convoy;
+  visible: boolean;
+  onClose: VoidFunction;
+}> = ({ visible, onClose, city, convoy }) => {
+  const [amountTraded, setAmountTraded] = useState(1);
+  return (
+    <Modal isOpen={visible} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent maxWidth={'95%'}>
+        <ModalHeader>
+          <VStack>
+            <Text>
+              {convoy.label}
+              {' <> '}
+              {city.label}
+            </Text>
+
+            <TradingAmountSelector
+              amountTraded={amountTraded}
+              setAmountTraded={setAmountTraded}
+            />
+          </VStack>
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <TradingPostTable
+            city={city}
+            convoy={convoy}
+            amountTraded={amountTraded}
+          />
+        </ModalBody>
+
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={onClose}>
+            OK
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+const TradingPostTable: FC<{
+  city: City;
+  convoy: Convoy;
+  amountTraded: number;
+}> = ({ city, convoy, amountTraded }) => {
+  const { tradingPost } = city;
+  const wares = city.storage.wares;
+  useEffect(() => {
+    // TODO CONTINUE HERE. trading post needs to check the convoys storage capacity.
+    tradingPost.setMerchant(convoy);
+  }, []);
+  const average = (a: number) => Math.round(a / amountTraded);
+  return (
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Goods</Th>
+          <Th>Town</Th>
+          <Th>⌀ Buy</Th>
+          <Th>⌀ Sell</Th>
+          <Th>Ship</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {Object.keys(wares).map((ware) => (
+          <Tr key={ware}>
+            <Td>{ware}</Td>
+            <Td>{city.storage.getStock(ware)}</Td>
+            <Td>
+              <Tooltip
+                label={tradingPost.getQuoteForSellingToMerchant(
+                  ware,
+                  amountTraded
+                )}
+              >
+                <Button
+                  onClick={() => {
+                    tradingPost.sellToMerchant(ware, amountTraded);
+                  }}
+                  // FIXME: bad UX because you cant just select 50 and then buy the remaining 20 from the city
+                  isDisabled={
+                    !tradingPost.canSellToMerchant(ware, amountTraded)
+                  }
+                  width={40}
+                >
+                  {average(
+                    tradingPost.getQuoteForSellingToMerchant(ware, amountTraded)
+                  )}
+                </Button>
+              </Tooltip>
+            </Td>
+            <Td>
+              <Tooltip
+                placement="top"
+                openDelay={1}
+                closeDelay={1}
+                label={tradingPost.getQuoteForBuyingFromMerchant(
+                  ware,
+                  amountTraded
+                )}
+              >
+                <Button
+                  onClick={() => {
+                    tradingPost.buyFromMerchant(ware, amountTraded);
+                  }}
+                  isDisabled={
+                    !tradingPost.canBuyFromMerchant(ware, amountTraded)
+                  }
+                  width={40}
+                >
+                  {average(
+                    tradingPost.getQuoteForBuyingFromMerchant(
+                      ware,
+                      amountTraded
+                    )
+                  )}
+                </Button>
+              </Tooltip>
+            </Td>
+            <Td>{convoy.storage.getStock(ware)}</Td>
+          </Tr>
+        ))}
+      </Tbody>
+    </Table>
+  );
+};
 
 export const CityDetails: FC = () => {
   const world = useWorld();
@@ -131,16 +349,7 @@ export const CityDetails: FC = () => {
       <SpeedSettings />
 
       <HStack align={'flex-start'} justify={'space-between'} gap={20}>
-        <VStack align={'flex-start'}>
-          <Heading as="h2">City {city.id} and its Citizens</Heading>
-          <List>
-            <ListItem>Beggars: {citizens.beggars}</ListItem>
-            <ListItem>Poor: {citizens.poor}</ListItem>
-            <ListItem>Middle: {citizens.middle}</ListItem>
-            <ListItem>Rich: {citizens.rich}</ListItem>
-            <ListItem>{city.treasury.balance} Gold</ListItem>
-          </List>
-        </VStack>
+        <CitizenDetails city={city} />
 
         <VStack align="flex-end">
           <Heading as="h2">Player</Heading>
@@ -149,6 +358,9 @@ export const CityDetails: FC = () => {
           </List>
         </VStack>
       </HStack>
+
+      <Port city={city} />
+
       <Heading as="h2">Trading Post</Heading>
       <Table>
         <Thead>

@@ -25,8 +25,16 @@ export class Storage {
     }));
   }
 
+  get usedCapacity() {
+    return Object.keys(this.wares).reduce(
+      (acc, ware) => acc + this.getStock(ware),
+      0
+    );
+  }
+
   getStock(ware: string) {
-    return this.wares[ware];
+    // flooring bodes trouble in the future. we'll see
+    return Math.floor(this.wares[ware]);
   }
 
   empty() {

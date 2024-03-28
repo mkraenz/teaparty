@@ -43,7 +43,7 @@ export class TradingPost {
     // simulating buying one item at a time
     const totalPrice = range(amountTraded)
       .map((n) => {
-        const waresLeft = this.cityStorage.getStock(ware) + n;
+        const waresLeft = Math.max(this.cityStorage.getStock(ware) + n, 0);
         const daysOfStock = waresLeft / consumptionPerDay;
         const stockForLessThanAWeek = daysOfStock < daysInAWeek;
         const stockForLessthanAMonth = daysOfStock < daysInAMonth;
@@ -72,7 +72,7 @@ export class TradingPost {
     // simulating buying one item at a time
     const totalPrice = range(amountTraded)
       .map((n) => {
-        const waresLeft = this.cityStorage.getStock(ware) - n;
+        const waresLeft = Math.max(this.cityStorage.getStock(ware) - n, 0);
         const daysOfStock = waresLeft / consumptionPerDay;
         const stockForLessThanAWeek = daysOfStock < daysInAWeek;
         const stockForLessthanAMonth = daysOfStock < daysInAMonth;
