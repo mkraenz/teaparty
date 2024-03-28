@@ -233,7 +233,7 @@ export const CityDetails: FC = () => {
                   )}
                 </Button>
               </Td>
-              <Td>{playerWares[ware]}</Td>
+              <Td>{Math.floor(playerWares[ware])}</Td>
             </Tr>
           ))}
         </Tbody>
