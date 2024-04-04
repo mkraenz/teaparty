@@ -110,6 +110,7 @@ export const builder = () => {
   });
   const navigator = new Navigator();
   const convoy = new Convoy({
+    owner: 'player',
     label: 'Antti',
     pos: { x: 100, y: 100 },
     storage: new Storage('Antti'),

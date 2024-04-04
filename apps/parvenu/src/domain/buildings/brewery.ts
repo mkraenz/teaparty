@@ -1,5 +1,5 @@
 import { Building } from './building';
-import { productionBuildings } from './production-buildings.data';
+import { buildingData } from './building.data';
 import { ProductionSystem } from './production.system';
 
 export class Brewery extends Building {
@@ -8,11 +8,11 @@ export class Brewery extends Building {
   constructor(params: { owner: string; productionSystem: ProductionSystem }) {
     super({
       owner: params.owner,
-      type: productionBuildings.brewery.type,
+      type: buildingData.brewery.type,
     });
     this.productionSystem = params.productionSystem;
 
-    this.productionSystem.init(productionBuildings.brewery);
+    this.productionSystem.init(buildingData.brewery);
   }
 
   save() {

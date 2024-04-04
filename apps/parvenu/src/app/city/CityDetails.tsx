@@ -37,8 +37,8 @@ import {
 } from 'react-icons/fi';
 import { Navigate, useParams } from 'react-router-dom';
 import { Brewery } from '../../domain/buildings/brewery';
+import { buildingData } from '../../domain/buildings/building.data';
 import { GrainFarm, PGrainFarm } from '../../domain/buildings/grain-farm';
-import { productionBuildings } from '../../domain/buildings/production-buildings.data';
 import { ProductionSystem } from '../../domain/buildings/production.system';
 import { WithProductionSystem } from '../../domain/buildings/with-production-system.mixin';
 import { Woodcutter } from '../../domain/buildings/woodcutter';
@@ -265,11 +265,9 @@ export const CityDetails: FC = () => {
   const buildings = city.buildingsList;
 
   // TODO continue here
-  const canBuild = (type: keyof typeof productionBuildings) =>
-    playerStorage.hasResources(
-      productionBuildings[type].constructionCosts.needs
-    ) &&
-    playerTreasury.hasEnough(productionBuildings[type].constructionCosts.money);
+  const canBuild = (type: keyof typeof buildingData) =>
+    playerStorage.hasResources(buildingData[type].constructionCosts.needs) &&
+    playerTreasury.hasEnough(buildingData[type].constructionCosts.money);
   const makeProductionSystem = () =>
     new ProductionSystem({
       cityTreasury: city.treasury,
@@ -283,7 +281,7 @@ export const CityDetails: FC = () => {
     });
   const buildBrewery = () => {
     const ProductionBuilding = Brewery;
-    const costs = productionBuildings.brewery.constructionCosts;
+    const costs = buildingData.brewery.constructionCosts;
 
     if (!playerStorage.hasResources(costs.needs))
       return console.log('not enough resources to build');
@@ -303,7 +301,7 @@ export const CityDetails: FC = () => {
   };
   const buildGrainFarm = () => {
     const ProductionBuilding = GrainFarm;
-    const costs = productionBuildings.grainFarm.constructionCosts;
+    const costs = buildingData.grainFarm.constructionCosts;
 
     if (!playerStorage.hasResources(costs.needs))
       return console.log('not enough resources to build');
@@ -323,7 +321,7 @@ export const CityDetails: FC = () => {
   };
   const buildWoodcutter = () => {
     const ProductionBuilding = Woodcutter;
-    const costs = productionBuildings.woodcutter.constructionCosts;
+    const costs = buildingData.woodcutter.constructionCosts;
 
     if (!playerStorage.hasResources(costs.needs))
       return console.log('not enough resources to build');

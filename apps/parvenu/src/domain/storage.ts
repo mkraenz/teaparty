@@ -63,7 +63,7 @@ export class Storage {
     return needs.every((need) => this.wares[need.ware] >= need.amount);
   }
 
-  hasCapacity(resource: { amount: number; ware: string }[]) {
+  hasCapacity(resource: Need[]) {
     const additionallyNeededCapacity = resource.reduce(
       (acc, { amount }) => acc + amount,
       0
@@ -75,8 +75,16 @@ export class Storage {
     console.log(this.wares);
   }
 
-  consume(needs: { ware: string; amount: number }[]) {
+  consume(needs: Need[]) {
     needs.forEach((need) => this.remove(need.ware, need.amount));
+  }
+
+  getAsAvailable(needs: Need[]) {
+    return needs.map((need) => {
+      const available = this.getStock(need.ware);
+      const amount = Math.min(need.amount, available);
+      return { ware: need.ware, amount };
+    });
   }
 
   debugFill() {

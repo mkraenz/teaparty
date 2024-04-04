@@ -13,3 +13,17 @@ export type Point = {
   x: number;
   y: number;
 };
+
+type IProductionBuilding = {
+  category: 'production';
+  type: string;
+  upkeepCost: number;
+  products: { ware: string; amount: number }[];
+  needs: { ware: string; amount: number }[];
+  wagesPerWorkerPerDay: number;
+  constructionCosts: {
+    needs: { ware: string; amount: number }[];
+    money: number;
+  };
+};
+export type IBuilding = IProductionBuilding;

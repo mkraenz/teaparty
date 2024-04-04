@@ -5,6 +5,7 @@ import { Player } from './player';
 export class World {
   cities: Record<string, City>;
   convoys: Record<string, Convoy>;
+  // actor names need to be unique because that's how ownership of buildings etc is determined
   player: Player;
   /** one second outgame is one day ingame. */
   totaltime = 0;

@@ -1,5 +1,8 @@
-export const productionBuildings = {
+import { IBuilding } from '../types';
+
+export const buildingData: Record<string, IBuilding> = {
   brewery: {
+    category: 'production',
     type: 'brewery',
     upkeepCost: 200,
     products: [{ ware: 'beer', amount: 8 }],
@@ -11,6 +14,7 @@ export const productionBuildings = {
     },
   },
   grainFarm: {
+    category: 'production',
     type: 'grainFarm',
     upkeepCost: 50,
     products: [{ ware: 'grain', amount: 16 }],
@@ -22,6 +26,7 @@ export const productionBuildings = {
     },
   },
   woodcutter: {
+    category: 'production',
     type: 'woodcutter',
     upkeepCost: 50,
     products: [{ ware: 'wood', amount: 6 }],

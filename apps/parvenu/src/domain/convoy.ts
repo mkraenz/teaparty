@@ -19,6 +19,7 @@ export class InvalidConvoyError extends Error {
 }
 
 export class Convoy {
+  owner: string;
   id: string;
   label: string;
   pos: Point;
@@ -51,6 +52,7 @@ export class Convoy {
 
   constructor(params: {
     id?: string;
+    owner: string;
     label: string;
     pos: Point;
     storage: Storage;
@@ -59,6 +61,7 @@ export class Convoy {
     navigator: Navigator;
   }) {
     this.id = params.id ?? v4(); // Note: since we want to be independent of the environment (js vs node), we're not using window.crypto here.
+    this.owner = params.owner;
     this.label = params.label;
     this.pos = params.pos;
     this.storage = params.storage;
