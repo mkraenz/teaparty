@@ -42,7 +42,7 @@ export class Convoy {
   }
 
   get totalCargoCapacity() {
-    return this.ships.reduce((acc, ship) => acc + ship.cargoCapacity, 0);
+    return this.storage.totalCapacity;
   }
 
   get usedCargoCapacity() {
@@ -68,6 +68,16 @@ export class Convoy {
     if (params.ships.length === 0) {
       throw new InvalidConvoyError('Convoy must have at least one ship', this);
     }
+
+    this.updateStorageCapacity();
+  }
+
+  updateStorageCapacity() {
+    const accumulatedCapacity = this.ships.reduce(
+      (acc, ship) => acc + ship.cargoCapacity,
+      0
+    );
+    this.storage.totalCapacity = accumulatedCapacity;
   }
 
   passTime(delta: number) {

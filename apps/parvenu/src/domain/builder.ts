@@ -104,7 +104,7 @@ export const builder = () => {
   });
   const ship = new Ship({
     owner: 'player',
-    cargoCapacity: 100,
+    cargoCapacity: 51,
     upkeep: 150,
     maxSpeed: 5,
   });

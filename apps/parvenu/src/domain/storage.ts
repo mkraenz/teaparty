@@ -10,12 +10,14 @@ const initialWares: Record<string, number> = {
 };
 
 export class Storage {
-  readonly owner: string = '';
+  readonly owner: string;
   /** IMPORTANT: The amount of wares can be floating point numbers. But whenever we show it to the user, we typically display integers for simplicity. */
   wares = { ...initialWares };
+  totalCapacity: number;
 
-  constructor(owner: string = '') {
+  constructor(owner = '', totalCapacity = Infinity) {
     this.owner = owner;
+    this.totalCapacity = totalCapacity;
   }
 
   get waresList() {
@@ -30,6 +32,10 @@ export class Storage {
       (acc, ware) => acc + this.getStock(ware),
       0
     );
+  }
+
+  get remainingCapacity() {
+    return this.totalCapacity - this.usedCapacity;
   }
 
   getStock(ware: string) {
@@ -55,6 +61,14 @@ export class Storage {
 
   hasResources(needs: Need[]) {
     return needs.every((need) => this.wares[need.ware] >= need.amount);
+  }
+
+  hasCapacity(resource: { amount: number; ware: string }[]) {
+    const additionallyNeededCapacity = resource.reduce(
+      (acc, { amount }) => acc + amount,
+      0
+    );
+    return this.remainingCapacity >= additionallyNeededCapacity;
   }
 
   log() {

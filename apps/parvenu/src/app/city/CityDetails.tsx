@@ -134,9 +134,11 @@ const TradingPostOverlay: FC<{
         <ModalHeader>
           <VStack>
             <Text>
-              {convoy.label}
+              {city.label} {city.storage.usedCapacity}
               {' <> '}
-              {city.label}
+              {convoy.label} {convoy.usedCargoCapacity}
+              {' / '}
+              {convoy.totalCargoCapacity}
             </Text>
 
             <TradingAmountSelector
@@ -172,7 +174,6 @@ const TradingPostTable: FC<{
   const { tradingPost } = city;
   const wares = city.storage.wares;
   useEffect(() => {
-    // TODO CONTINUE HERE. trading post needs to check the convoys storage capacity.
     tradingPost.setMerchant(convoy);
   }, []);
   const average = (a: number) => Math.round(a / amountTraded);
@@ -258,14 +259,12 @@ export const CityDetails: FC = () => {
 
   if (!city) return <Navigate to="/" />;
 
-  const wares = city.storage.wares;
   const player = world.player;
   const playerStorage = player.storage;
   const playerTreasury = player.treasury;
-  const playerWares = playerStorage.wares;
   const buildings = city.buildingsList;
-  const { citizens, tradingPost } = city;
 
+  // TODO continue here
   const canBuild = (type: keyof typeof productionBuildings) =>
     playerStorage.hasResources(
       productionBuildings[type].constructionCosts.needs
@@ -360,96 +359,6 @@ export const CityDetails: FC = () => {
       </HStack>
 
       <Port city={city} />
-
-      <Heading as="h2">Trading Post</Heading>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Goods</Th>
-            <Th>Town</Th>
-            <Th>Buy one</Th>
-            <Th>Buy all</Th>
-            <Th>Sell one</Th>
-            <Th>Sell all</Th>
-            <Th>You</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {Object.keys(wares).map((ware) => (
-            <Tr key={ware}>
-              <Td>{ware}</Td>
-              <Td>{wares[ware]}</Td>
-              <Td>
-                <Button
-                  onClick={() => {
-                    tradingPost.sellToMerchant(ware);
-                  }}
-                  isDisabled={!tradingPost.canSellToMerchant(ware)}
-                  width={100}
-                >
-                  {tradingPost.getQuoteForSellingToMerchant(ware)}
-                </Button>
-              </Td>
-              <Td>
-                <Button
-                  onClick={() => {
-                    tradingPost.sellToMerchant(
-                      ware,
-                      city.storage.getStock(ware)
-                    );
-                  }}
-                  isDisabled={
-                    !tradingPost.canSellToMerchant(
-                      ware,
-                      city.storage.getStock(ware)
-                    )
-                  }
-                  width={100}
-                >
-                  {tradingPost.getQuoteForSellingToMerchant(
-                    ware,
-                    city.storage.getStock(ware)
-                  )}
-                </Button>
-              </Td>
-              <Td>
-                <Button
-                  onClick={() => {
-                    tradingPost.buyFromMerchant(ware);
-                  }}
-                  isDisabled={!tradingPost.canBuyFromMerchant(ware)}
-                  width={100}
-                >
-                  {tradingPost.getQuoteForBuyingFromMerchant(ware)}
-                </Button>
-              </Td>
-              <Td>
-                <Button
-                  onClick={() => {
-                    tradingPost.buyFromMerchant(
-                      ware,
-                      playerStorage.getStock(ware)
-                    );
-                  }}
-                  isDisabled={
-                    !tradingPost.canBuyFromMerchant(
-                      ware,
-                      playerStorage.getStock(ware)
-                    )
-                  }
-                  width={100}
-                >
-                  {tradingPost.getQuoteForBuyingFromMerchant(
-                    ware,
-                    playerStorage.getStock(ware)
-                  )}
-                </Button>
-              </Td>
-              <Td>{Math.floor(playerWares[ware])}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
       <Heading as="h2">Buildings</Heading>
 
       <Button onClick={buildWoodcutter} isDisabled={!canBuild('woodcutter')}>

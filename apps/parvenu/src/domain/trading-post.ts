@@ -94,7 +94,15 @@ export class TradingPost {
     const inStock = this.cityStorage.hasResources([{ amount, ware }]);
     const price = this.getQuoteForSellingToMerchant(ware, amount);
     const merchantCanPay = this.merchantTreasury.hasEnough(price);
-    return inStock && merchantCanPay;
+    const merchantCanStore = this.merchantStorage.hasCapacity([
+      { amount, ware },
+    ]);
+    console.log({
+      inStock,
+      merchantCanPay,
+      merchantCanStore,
+    });
+    return inStock && merchantCanPay && merchantCanStore;
   }
 
   canBuyFromMerchant(ware: string, amount: number = 1) {
