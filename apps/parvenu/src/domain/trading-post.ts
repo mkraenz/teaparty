@@ -97,18 +97,12 @@ export class TradingPost {
     const merchantCanStore = this.merchantStorage.hasCapacity([
       { amount, ware },
     ]);
-    console.log({
-      inStock,
-      merchantCanPay,
-      merchantCanStore,
-    });
     return inStock && merchantCanPay && merchantCanStore;
   }
 
   canBuyFromMerchant(ware: string, amount: number = 1) {
     const inStock = this.merchantStorage.hasResources([{ amount, ware }]);
-    // const cityCanPay = this.cityTreasury.hasEnough(this.getQuoteForBuyingFromMerchant(ware, amount)); // do we want to have finite money for what the city can buy? prolly not
-    return inStock; // && cityCanPay;
+    return inStock;
   }
 
   sellToMerchant(ware: string, amount: number = 1) {

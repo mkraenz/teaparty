@@ -7,7 +7,7 @@ export class CountingHouse extends Building {
   readonly treasury: Treasury;
 
   constructor(params: { storage: Storage; owner: string; treasury: Treasury }) {
-    super({ type: 'counting-house', owner: params.owner });
+    super({ type: 'countingHouse', owner: params.owner });
     this.storage = params.storage;
     this.treasury = params.treasury;
   }

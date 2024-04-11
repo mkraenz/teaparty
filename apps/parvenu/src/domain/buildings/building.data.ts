@@ -1,6 +1,16 @@
 import { IBuilding } from '../types';
 
 export const buildingData: Record<string, IBuilding> = {
+  countingHouse: {
+    category: 'service',
+    type: 'countingHouse',
+    unique: 'per-city-per-merchant',
+    upkeepCost: 50,
+    constructionCosts: {
+      needs: [{ ware: 'wood', amount: 20 }],
+      money: 1500,
+    },
+  },
   brewery: {
     category: 'production',
     type: 'brewery',
@@ -33,12 +43,7 @@ export const buildingData: Record<string, IBuilding> = {
     needs: [],
     wagesPerWorkerPerDay: 10,
     constructionCosts: {
-      needs: [
-        {
-          ware: 'wood',
-          amount: 60,
-        },
-      ],
+      needs: [{ ware: 'wood', amount: 50 }],
       money: 1000,
     },
   },

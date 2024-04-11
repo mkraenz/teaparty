@@ -55,3 +55,12 @@ export function WithProductionSystem<TBase extends HasProductionSystem>(
 }
 
 export type Producify = InstanceType<ReturnType<typeof WithProductionSystem>>;
+
+export const hasProductionSystem = (
+  instance: object
+): instance is { productionSystem: ProductionSystem } => {
+  return (
+    'productionSystem' in instance &&
+    instance.productionSystem instanceof ProductionSystem
+  );
+};

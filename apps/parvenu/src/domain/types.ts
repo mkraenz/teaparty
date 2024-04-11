@@ -14,16 +14,26 @@ export type Point = {
   y: number;
 };
 
-type IProductionBuilding = {
-  category: 'production';
+type ConstructionCosts = {
+  needs: Need[];
+  money: number;
+};
+
+type BaseBuilding = {
   type: string;
   upkeepCost: number;
+  constructionCosts: ConstructionCosts;
+  unique?: 'per-city' | 'global' | 'per-merchant' | 'per-city-per-merchant';
+};
+type IServiceBuilding = {
+  category: 'service';
+  type: string;
+} & BaseBuilding;
+
+type IProductionBuilding = {
+  category: 'production';
   products: { ware: string; amount: number }[];
   needs: { ware: string; amount: number }[];
   wagesPerWorkerPerDay: number;
-  constructionCosts: {
-    needs: { ware: string; amount: number }[];
-    money: number;
-  };
-};
-export type IBuilding = IProductionBuilding;
+} & BaseBuilding;
+export type IBuilding = IProductionBuilding | IServiceBuilding;

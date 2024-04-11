@@ -77,7 +77,6 @@ export class Navigator {
 
   /** linear interpolation along path */
   move(delta: number) {
-    // TODO continue here: clicking a second time somewhere causes the convoy to randomly jump across the map
     const path = this.path;
     const target = this.target;
     if (

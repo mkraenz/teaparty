@@ -1,4 +1,5 @@
 import { Building } from './buildings/building';
+import type { CountingHouse } from './buildings/counting-house';
 import { Citizens } from './citizens';
 import { Port } from './port';
 import { Storage } from './storage';
@@ -77,6 +78,13 @@ export class City {
         building.payUpkeep();
       }
     });
+  }
+
+  getCountingHouse(owner: string) {
+    return this.buildingsList.find(
+      (building) =>
+        building.type === 'countingHouse' && building.owner === owner
+    ) as CountingHouse | undefined;
   }
 
   employMigrants() {

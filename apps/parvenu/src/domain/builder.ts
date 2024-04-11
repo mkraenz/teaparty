@@ -61,6 +61,7 @@ export const builder = () => {
   const player = new Player({
     storage: playerStorage,
     treasury: playerTreasury,
+    name: 'player',
   });
 
   const cities = Object.values(cityData).map((data) =>
@@ -100,17 +101,17 @@ export const builder = () => {
   const countingHouse = new CountingHouse({
     storage: new Storage('counting house'),
     treasury: player.treasury,
-    owner: 'player',
+    owner: player.name,
   });
   const ship = new Ship({
-    owner: 'player',
+    owner: player.name,
     cargoCapacity: 51,
     upkeep: 150,
     maxSpeed: 5,
   });
   const navigator = new Navigator();
   const convoy = new Convoy({
-    owner: 'player',
+    owner: player.name,
     label: 'Antti',
     pos: { x: 100, y: 100 },
     storage: new Storage('Antti'),
@@ -126,7 +127,7 @@ export const builder = () => {
     targetStorage: countingHouse.storage,
     sourceStorage: convoy.storage,
   });
-  freightForwarder.transferFrom('wood', 50);
+  freightForwarder.transferFrom('wood', 60);
 
   const world = new World({
     player,

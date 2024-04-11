@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from '../utils/utils';
 import { Brewery } from './buildings/brewery';
 import { buildingData } from './buildings/building.data';
 import { CountingHouse } from './buildings/counting-house';
@@ -7,6 +7,7 @@ import { ProductionSystem } from './buildings/production.system';
 import { WithProductionSystem } from './buildings/with-production-system.mixin';
 import { Woodcutter } from './buildings/woodcutter';
 import { City } from './city';
+import { Storage } from './storage';
 import { Treasury } from './treasury';
 import { IBuilding, Need } from './types';
 import { Workforce } from './workforce';
@@ -45,26 +46,21 @@ export class MasterBuilder {
 
   build(buildingType: string) {
     const data = buildingData[buildingType];
-    if (this.canBuild(data)) {
-      this.merchant.treasury.debit(data.constructionCosts.money);
-      // construction costs get handed to the citizens, so not crediting the city treasury
+    if (this._canBuild(data)) {
+      this.merchant.treasury.credit(data.constructionCosts.money);
+      // construction costs get handed to the citizens, so not debiting the city treasury
       this.takeResources(data.constructionCosts.needs);
       const building = this.makeBuilding(data);
       this.city.build(building);
     }
-    // add building to city.buildings
   }
 
-  takeResources(needs: Need[]) {
+  private takeResources(needs: Need[]) {
     const convoys = this.city.port.convoys;
     const playerOwned = Object.values(convoys).filter(
       (convoy) => convoy.owner === this.merchant.name
     );
-    const countingHouse = this.city.buildingsList.filter(
-      (building) =>
-        building.type === 'countingHouse' &&
-        building.owner === this.merchant.name
-    )[0] as CountingHouse | undefined;
+    const countingHouse = this.city.getCountingHouse(this.merchant.name);
 
     const resourcesInCountingHouse =
       countingHouse?.storage.getAsAvailable(needs);
@@ -80,18 +76,60 @@ export class MasterBuilder {
     }
   }
 
-  private canBuild(data: IBuilding) {
-    // params.city.port.convoys
-    // TODO hasResources
-    return this.merchant.treasury.hasEnough(data.constructionCosts.money);
+  canBuild(buildingType: string) {
+    const data = buildingData[buildingType];
+    return this._canBuild(data);
   }
 
-  makeBuilding(data: IBuilding) {
+  private _canBuild(data: IBuilding) {
+    if (!this.merchant.treasury.hasEnough(data.constructionCosts.money))
+      return false;
+
+    const buildingAlreadyExists = this.city.buildingsList.some(
+      (building) =>
+        building.type === data.type && building.ownedBy(this.merchant.name)
+    );
+    if (data.unique === 'per-city-per-merchant' && buildingAlreadyExists)
+      return false;
+
+    const convoys = this.city.port.convoys;
+    const playerOwned = Object.values(convoys).filter(
+      (convoy) => convoy.owner === this.merchant.name
+    );
+    const needs = data.constructionCosts.needs;
+    const countingHouse = this.city.buildingsList.filter(
+      (building) =>
+        building.type === 'countingHouse' &&
+        building.owner === this.merchant.name
+    )[0] as CountingHouse | undefined;
+
+    const resourcesInCountingHouse =
+      countingHouse?.storage.getAsAvailable(needs);
+    let remainingNeeds = resourcesInCountingHouse
+      ? subtractNeedsOrZero(needs, resourcesInCountingHouse)
+      : needs;
+    for (const convoy of playerOwned) {
+      const resourcesInConvoy = convoy.storage.getAsAvailable(remainingNeeds);
+      remainingNeeds = subtractNeedsOrZero(remainingNeeds, resourcesInConvoy);
+    }
+    const allResourceNeedsFulfilled = remainingNeeds.every(
+      (need) => need.amount === 0
+    );
+    return allResourceNeedsFulfilled;
+  }
+
+  private makeBuilding(data: IBuilding) {
     const type = data.type;
     if (data.category === 'production' && type in buildingTypeToClass) {
+      debugger;
+      const countingHouse = this.city.getCountingHouse(this.merchant.name);
+      if (!countingHouse)
+        throw new Error(
+          'No counting house found. You need a counting house to build production buildings. There must be a bug that allows to bypass this restriction.'
+        );
       const productionSystem = new ProductionSystem({
         cityTreasury: this.city.treasury,
-        storage: this.city.storage, // TODO THIS IS WRONG! should be the counting house's storage
+        storage: countingHouse.storage,
         treasury: this.merchant.treasury,
         workforce: new Workforce({
           citizens: this.city.citizens,
@@ -107,6 +145,14 @@ export class MasterBuilder {
         productionSystem,
       });
       return building;
+    }
+
+    if (data.type === 'countingHouse') {
+      return new CountingHouse({
+        owner: this.merchant.name,
+        treasury: this.merchant.treasury,
+        storage: new Storage(this.merchant.name),
+      });
     }
 
     throw new Error(`Building type not implemented. Found ${type}`);

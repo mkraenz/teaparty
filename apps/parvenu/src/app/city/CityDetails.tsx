@@ -36,15 +36,11 @@ import {
   FiUserX,
 } from 'react-icons/fi';
 import { Navigate, useParams } from 'react-router-dom';
-import { Brewery } from '../../domain/buildings/brewery';
-import { buildingData } from '../../domain/buildings/building.data';
-import { GrainFarm, PGrainFarm } from '../../domain/buildings/grain-farm';
-import { ProductionSystem } from '../../domain/buildings/production.system';
-import { WithProductionSystem } from '../../domain/buildings/with-production-system.mixin';
-import { Woodcutter } from '../../domain/buildings/woodcutter';
+import { PGrainFarm } from '../../domain/buildings/grain-farm';
+import { hasProductionSystem } from '../../domain/buildings/with-production-system.mixin';
 import { City } from '../../domain/city';
 import { Convoy } from '../../domain/convoy';
-import { Workforce } from '../../domain/workforce';
+import { MasterBuilder } from '../../domain/master-builder';
 import SpeedSettings from '../common/SpeedSettings';
 import ToWorldmapButton from '../common/ToWorldmapButton';
 import { useCity, useWorld } from '../general/GameProvider';
@@ -68,7 +64,7 @@ const CitizenDetails: FC<{ city: City }> = ({ city }) => {
 const Port: FC<{ city: City }> = ({ city }) => {
   const hoverColor = useColorModeValue('gray.300', 'gray.700');
   const [selected, setSelected] = useState<Convoy | null>(null);
-  const tradingPost = useDisclosure();
+  const tradingPostDialog = useDisclosure();
   return (
     <VStack align={'flex-start'}>
       <Heading as="h2">Port</Heading>
@@ -80,7 +76,7 @@ const Port: FC<{ city: City }> = ({ city }) => {
             cursor={'pointer'}
             onClick={() => {
               setSelected(convoy);
-              tradingPost.onOpen();
+              tradingPostDialog.onOpen();
             }}
             _hover={{ backgroundColor: hoverColor }}
           >
@@ -94,8 +90,8 @@ const Port: FC<{ city: City }> = ({ city }) => {
         <TradingPostOverlay
           city={city}
           convoy={selected}
-          visible={tradingPost.isOpen}
-          onClose={tradingPost.onClose}
+          visible={tradingPostDialog.isOpen}
+          onClose={tradingPostDialog.onClose}
         />
       )}
     </VStack>
@@ -260,84 +256,16 @@ export const CityDetails: FC = () => {
   if (!city) return <Navigate to="/" />;
 
   const player = world.player;
-  const playerStorage = player.storage;
   const playerTreasury = player.treasury;
   const buildings = city.buildingsList;
 
-  // TODO continue here
-  const canBuild = (type: keyof typeof buildingData) =>
-    playerStorage.hasResources(buildingData[type].constructionCosts.needs) &&
-    playerTreasury.hasEnough(buildingData[type].constructionCosts.money);
-  const makeProductionSystem = () =>
-    new ProductionSystem({
-      cityTreasury: city.treasury,
-      storage: playerStorage,
-      treasury: playerTreasury,
-      workforce: new Workforce({
-        citizens: city.citizens,
-        maxWorkers: 100,
-        workers: 0,
-      }),
-    });
-  const buildBrewery = () => {
-    const ProductionBuilding = Brewery;
-    const costs = buildingData.brewery.constructionCosts;
-
-    if (!playerStorage.hasResources(costs.needs))
-      return console.log('not enough resources to build');
-    if (!playerTreasury.hasEnough(costs.money))
-      return console.log('not enough money to build');
-
-    playerStorage.consume(costs.needs);
-    playerTreasury.credit(costs.money);
-
-    const productionSystem = makeProductionSystem();
-    const ActualBuilding = WithProductionSystem(ProductionBuilding);
-    const building = new ActualBuilding({
-      owner: 'player',
-      productionSystem,
-    });
-    city.build(building);
+  const canBuild = (buildingType: string) => {
+    const masterBuilder = new MasterBuilder({ city, merchant: player });
+    return masterBuilder.canBuild(buildingType);
   };
-  const buildGrainFarm = () => {
-    const ProductionBuilding = GrainFarm;
-    const costs = buildingData.grainFarm.constructionCosts;
-
-    if (!playerStorage.hasResources(costs.needs))
-      return console.log('not enough resources to build');
-    if (!playerTreasury.hasEnough(costs.money))
-      return console.log('not enough money to build');
-
-    playerStorage.consume(costs.needs);
-    playerTreasury.credit(costs.money);
-
-    const productionSystem = makeProductionSystem();
-    const ActualBuilding = WithProductionSystem(ProductionBuilding);
-    const building = new ActualBuilding({
-      owner: 'player',
-      productionSystem,
-    });
-    city.build(building);
-  };
-  const buildWoodcutter = () => {
-    const ProductionBuilding = Woodcutter;
-    const costs = buildingData.woodcutter.constructionCosts;
-
-    if (!playerStorage.hasResources(costs.needs))
-      return console.log('not enough resources to build');
-    if (!playerTreasury.hasEnough(costs.money))
-      return console.log('not enough money to build');
-
-    playerStorage.consume(costs.needs);
-    playerTreasury.credit(costs.money);
-
-    const productionSystem = makeProductionSystem();
-    const ActualBuilding = WithProductionSystem(ProductionBuilding);
-    const building = new ActualBuilding({
-      owner: 'player',
-      productionSystem,
-    });
-    city.build(building);
+  const build = (buildingType: string) => {
+    const masterBuilder = new MasterBuilder({ city, merchant: player });
+    masterBuilder.build(buildingType);
   };
 
   return (
@@ -359,54 +287,73 @@ export const CityDetails: FC = () => {
       <Port city={city} />
       <Heading as="h2">Buildings</Heading>
 
-      <Button onClick={buildWoodcutter} isDisabled={!canBuild('woodcutter')}>
+      <Button
+        onClick={() => build('countingHouse')}
+        isDisabled={!canBuild('countingHouse')}
+      >
+        Build Counting House
+      </Button>
+      <Button
+        onClick={() => build('woodcutter')}
+        isDisabled={!canBuild('woodcutter')}
+      >
         Build woodcutter
       </Button>
-      <Button onClick={buildGrainFarm} isDisabled={!canBuild('grainFarm')}>
+      <Button
+        onClick={() => build('grainFarm')}
+        isDisabled={!canBuild('grainFarm')}
+      >
         Build grain farm
       </Button>
-      <Button onClick={buildBrewery} isDisabled={!canBuild('brewery')}>
+      <Button
+        onClick={() => build('brewery')}
+        isDisabled={!canBuild('brewery')}
+      >
         Build brewery
       </Button>
       <List>
         {buildings.map((building) => (
           <ListItem display={'flex'} gap={10} key={building.id}>
             {building.owner}'s {building.id}:{' '}
-            {(building as PGrainFarm).productionSystem.workforce.workers}{' '}
-            workers of{' '}
-            {(building as PGrainFarm).productionSystem.desiredWorkers} desired
-            <IconButton
-              color="red.500"
-              icon={<FiUserX />}
-              aria-label="Fire all workers"
-              onClick={() => {
-                (building as PGrainFarm).setDesiredWorkers(0);
-              }}
-            />
-            <IconButton
-              color="red.300"
-              icon={<FiUserMinus />}
-              aria-label="Fire one worker"
-              onClick={() => {
-                (building as PGrainFarm).decrementDesiredWorkers(5);
-              }}
-            />
-            <IconButton
-              color="green.300"
-              icon={<FiUserPlus />}
-              aria-label="Add one workers"
-              onClick={() => {
-                (building as PGrainFarm).incrementDesiredWorkers(5);
-              }}
-            />
-            <IconButton
-              color="green.500"
-              icon={<FiUserCheck />}
-              aria-label="Max workers"
-              onClick={() => {
-                (building as PGrainFarm).setDesiredWorkers(100);
-              }}
-            />
+            {hasProductionSystem(building) && (
+              <>
+                {building.productionSystem.workforce.workers} workers of{' '}
+                {(building as PGrainFarm).productionSystem.desiredWorkers}{' '}
+                desired
+                <IconButton
+                  color="red.500"
+                  icon={<FiUserX />}
+                  aria-label="Fire all workers"
+                  onClick={() => {
+                    (building as PGrainFarm).setDesiredWorkers(0);
+                  }}
+                />
+                <IconButton
+                  color="red.300"
+                  icon={<FiUserMinus />}
+                  aria-label="Fire one worker"
+                  onClick={() => {
+                    (building as PGrainFarm).decrementDesiredWorkers(5);
+                  }}
+                />
+                <IconButton
+                  color="green.300"
+                  icon={<FiUserPlus />}
+                  aria-label="Add one workers"
+                  onClick={() => {
+                    (building as PGrainFarm).incrementDesiredWorkers(5);
+                  }}
+                />
+                <IconButton
+                  color="green.500"
+                  icon={<FiUserCheck />}
+                  aria-label="Max workers"
+                  onClick={() => {
+                    (building as PGrainFarm).setDesiredWorkers(100);
+                  }}
+                />
+              </>
+            )}
             <IconButton
               colorScheme="red"
               icon={<FiTrash />}
@@ -415,10 +362,34 @@ export const CityDetails: FC = () => {
                 city.destroyBuilding(building.id);
               }}
             />
+            {building.type === 'countingHouse' && (
+              <CountingHouseTradeButton city={city} building={building} />
+            )}
           </ListItem>
         ))}
       </List>
     </div>
+  );
+};
+
+const CountingHouseTradeButton = ({ city, building }: any) => {
+  const tradingPostDialog = useDisclosure();
+  return (
+    <>
+      <IconButton
+        icon={<FiUserCheck />}
+        aria-label="Open counting house trade menu"
+        onClick={tradingPostDialog.onOpen}
+      />
+
+      <TradingPostOverlay
+        city={city}
+        // TODO continue here by adding support for trade with counting house.
+        convoy={building as any}
+        visible={tradingPostDialog.isOpen}
+        onClose={tradingPostDialog.onClose}
+      />
+    </>
   );
 };
 
