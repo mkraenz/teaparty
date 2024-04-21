@@ -36,6 +36,10 @@ import {
   FiUserX,
 } from 'react-icons/fi';
 import { Navigate, useParams } from 'react-router-dom';
+import {
+  CountingHouse,
+  isCountingHouse,
+} from '../../domain/buildings/counting-house';
 import { PGrainFarm } from '../../domain/buildings/grain-farm';
 import { hasProductionSystem } from '../../domain/buildings/with-production-system.mixin';
 import { City } from '../../domain/city';
@@ -89,7 +93,7 @@ const Port: FC<{ city: City }> = ({ city }) => {
       {selected && (
         <TradingPostOverlay
           city={city}
-          convoy={selected}
+          merchant={selected}
           visible={tradingPostDialog.isOpen}
           onClose={tradingPostDialog.onClose}
         />
@@ -118,25 +122,32 @@ const TradingAmountSelector: FC<{
 
 const TradingPostOverlay: FC<{
   city: City;
-  convoy: Convoy;
+  merchant: Convoy | CountingHouse;
   visible: boolean;
   onClose: VoidFunction;
-}> = ({ visible, onClose, city, convoy }) => {
+}> = ({ visible, onClose, city, merchant }) => {
   const [amountTraded, setAmountTraded] = useState(1);
   return (
     <Modal isOpen={visible} onClose={onClose}>
       <ModalOverlay />
       <ModalContent maxWidth={'95%'}>
         <ModalHeader>
-          <VStack>
+          {isCountingHouse(merchant) ? (
             <Text>
               {city.label} {city.storage.usedCapacity}
               {' <> '}
-              {convoy.label} {convoy.usedCargoCapacity}
-              {' / '}
-              {convoy.totalCargoCapacity}
+              {merchant.owner}'s Counting House {merchant.storage.usedCapacity}
             </Text>
-
+          ) : (
+            <Text>
+              {city.label} {city.storage.usedCapacity}
+              {' <> '}
+              {merchant.label} {merchant.usedCargoCapacity}
+              {' / '}
+              {merchant.totalCargoCapacity}
+            </Text>
+          )}
+          <VStack>
             <TradingAmountSelector
               amountTraded={amountTraded}
               setAmountTraded={setAmountTraded}
@@ -147,7 +158,7 @@ const TradingPostOverlay: FC<{
         <ModalBody>
           <TradingPostTable
             city={city}
-            convoy={convoy}
+            merchant={merchant}
             amountTraded={amountTraded}
           />
         </ModalBody>
@@ -164,13 +175,13 @@ const TradingPostOverlay: FC<{
 
 const TradingPostTable: FC<{
   city: City;
-  convoy: Convoy;
+  merchant: Convoy | CountingHouse;
   amountTraded: number;
-}> = ({ city, convoy, amountTraded }) => {
+}> = ({ city, merchant, amountTraded }) => {
   const { tradingPost } = city;
   const wares = city.storage.wares;
   useEffect(() => {
-    tradingPost.setMerchant(convoy);
+    tradingPost.setMerchant(merchant);
   }, []);
   const average = (a: number) => Math.round(a / amountTraded);
   return (
@@ -240,7 +251,7 @@ const TradingPostTable: FC<{
                 </Button>
               </Tooltip>
             </Td>
-            <Td>{convoy.storage.getStock(ware)}</Td>
+            <Td>{merchant.storage.getStock(ware)}</Td>
           </Tr>
         ))}
       </Tbody>
@@ -362,7 +373,7 @@ export const CityDetails: FC = () => {
                 city.destroyBuilding(building.id);
               }}
             />
-            {building.type === 'countingHouse' && (
+            {isCountingHouse(building) && (
               <CountingHouseTradeButton city={city} building={building} />
             )}
           </ListItem>
@@ -372,7 +383,13 @@ export const CityDetails: FC = () => {
   );
 };
 
-const CountingHouseTradeButton = ({ city, building }: any) => {
+const CountingHouseTradeButton = ({
+  city,
+  building,
+}: {
+  city: City;
+  building: CountingHouse;
+}) => {
   const tradingPostDialog = useDisclosure();
   return (
     <>
@@ -384,8 +401,7 @@ const CountingHouseTradeButton = ({ city, building }: any) => {
 
       <TradingPostOverlay
         city={city}
-        // TODO continue here by adding support for trade with counting house.
-        convoy={building as any}
+        merchant={building}
         visible={tradingPostDialog.isOpen}
         onClose={tradingPostDialog.onClose}
       />

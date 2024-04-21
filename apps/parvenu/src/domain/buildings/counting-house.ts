@@ -16,3 +16,12 @@ export class CountingHouse extends Building {
     // do nothing for now
   }
 }
+
+export function isCountingHouse(building: unknown): building is CountingHouse {
+  return (
+    typeof building === 'object' &&
+    building !== null &&
+    'type' in building &&
+    building.type === 'countingHouse'
+  );
+}

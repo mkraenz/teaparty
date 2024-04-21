@@ -58,7 +58,7 @@ const WorldMap: FC = () => {
           width: 639,
           height: 361,
           position: 'relative',
-          // zoom: 2 // TODO: not working with mouse click position, but browser zoom works
+          // zoom: 2 // FIXME: not working with mouse click position, but browser zoom works
         }}
         onClick={() => selection.setSelected('')}
         onContextMenu={setConvoyTargetLandOrWater}

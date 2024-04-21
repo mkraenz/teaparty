@@ -27,10 +27,11 @@ const GameContext = createContext<[Game, (game: Game) => void]>([
 export const GameProvider: FC<PropsWithChildren> = ({ children }) => {
   const [game, setGame] = useState({
     ...builder(),
-    navmesh: new NavMesh(navmeshPolygons), // TODO: do we need to call remove() to clean up to avoid memory leaks?
+    navmesh: new NavMesh(navmeshPolygons), // FIXME: do we need to call remove() to clean up to avoid memory leaks?
   });
 
   useEffect(() => {
+    // for easier debugging
     (window as any).game = game;
   }, []);
 
