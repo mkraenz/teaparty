@@ -25,6 +25,9 @@
       "@teaparty/react-firebase-functions": [
         "libs/shared/react-firebase-functions/src/index.ts"
       ],
+      "@teaparty/react-firebase-remote-config": [
+        "libs/shared/react-firebase-remote-config/src/index.ts"
+      ],
       "@teaparty/shared-ui": ["libs/shared/ui/src/index.ts"]
     }
   },
