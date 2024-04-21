@@ -28,5 +28,5 @@ We are relying on [Navigation Mesh](https://en.wikipedia.org/wiki/Navigation_mes
   - Save to png file.
 - run `image-to-number-array.ts` from [repo](https://github.com/mkraenz/remove-margins-from-tilemap/) to generate a navigation matrix.
 - next, run `bake-navmesh-polygons.ts` from [repo](https://github.com/mkraenz/remove-margins-from-tilemap/) to generate the navigation mesh polygons.
-- Copy-paste the output file `navmesh-polygons.json` to `src/assets/parvenu/`.
+- Copy-paste the output file `navmesh-polygons.json` to `apps/parvenu/src/app/navmesh-polygons.json`. (command: `cp navmesh-polygons.json /home/mirco/programming/teaparty/apps/parvenu/src/app/navmesh-polygons.json`)
 - Check `apps/parvenu/src/app/PathFindingTest.tsx:36~38` for the usage of the navigation mesh.
