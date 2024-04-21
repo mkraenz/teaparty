@@ -1,4 +1,4 @@
-import { IconButton } from '@chakra-ui/react';
+import { Box, IconButton } from '@chakra-ui/react';
 import { FC, MouseEventHandler } from 'react';
 import { MdSailing } from 'react-icons/md';
 import { useConvoySelector } from '../SelectionProvider';
@@ -17,15 +17,18 @@ const Convoy: FC<Props> = ({ id }) => {
     selector.setSelectedWithNavEffect(convoy.id);
   };
   return (
-    <IconButton
-      onClick={handleSelect}
-      icon={<MdSailing />}
-      aria-label={convoy.label}
-      pos={'absolute'}
-      top={convoy.pos.y}
-      left={convoy.pos.x}
-      isActive={selector.selected === id}
-    />
+    <Box pos={'absolute'} top={convoy.pos.y} left={convoy.pos.x}>
+      <IconButton
+        position={'relative'}
+        left={'-50%'}
+        top={'-21px'}
+        onClick={handleSelect}
+        icon={<MdSailing />}
+        aria-label={convoy.label}
+        isActive={selector.selected === id}
+        backgroundColor={'transparent'}
+      />
+    </Box>
   );
 };
 

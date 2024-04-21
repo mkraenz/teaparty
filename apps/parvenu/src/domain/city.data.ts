@@ -11,27 +11,27 @@ export const cityData: { [cityName: string]: CityData } = {
   Hamburg: {
     id: 'hamburg',
     label: 'Hamburg',
-    pos: { x: 230, y: 290 },
+    pos: { x: 237, y: 300 },
     beggars: 200,
   },
   Gdansk: {
     id: 'Gdansk',
     label: 'Gdansk',
-    pos: { x: 400, y: 260 },
+    pos: { x: 407, y: 271 },
   },
   Stockholm: {
     id: 'Stockholm',
     label: 'Stockholm',
-    pos: { x: 400, y: 10 },
+    pos: { x: 406, y: 55 },
   },
   Edinburgh: {
     id: 'Edinburgh',
     label: 'Edinburgh',
-    pos: { x: 42, y: 127 },
+    pos: { x: 29, y: 128 },
   },
   London: {
     id: 'London',
     label: 'London',
-    pos: { x: 10, y: 310 },
+    pos: { x: 45, y: 314 },
   },
 };

@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react';
+import { Button, Text, VStack } from '@chakra-ui/react';
 import { FC, MouseEventHandler } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useCity } from '../general/GameProvider';
@@ -12,17 +12,33 @@ const City: FC<Props> = ({ id, onContextMenu }) => {
   const city = useCity(id);
   if (!city) return <Navigate to="/" />;
   return (
-    <Button
-      key={city.id}
+    <VStack
       pos={'absolute'}
-      top={city.pos.y}
-      left={city.pos.x}
-      as={Link}
-      to={`/cities/${city.id}`}
-      onContextMenu={onContextMenu}
+      // forcing px bc if we use numbers below 10 direcly, chakra will convert them to the --chakra-sizes-<number> css variable instead
+      top={`${city.pos.y}px`}
+      left={`${city.pos.x}px`}
+      gap={0}
     >
-      {city.label}
-    </Button>
+      <Button
+        position={'relative'}
+        left={'-50%'}
+        top={'-50%'}
+        aria-label={city.label}
+        as={Link}
+        to={`/cities/${city.id}`}
+        onContextMenu={onContextMenu}
+        colorScheme="red"
+        borderRadius={'50%'}
+        borderWidth={1}
+        h={2.5}
+        w={2.5}
+        minW={2.5}
+        p={0}
+      />
+      <Text position={'relative'} left={'-50%'} top={'-50%'}>
+        {city.label}
+      </Text>
+    </VStack>
   );
 };
 
