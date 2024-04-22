@@ -17,7 +17,14 @@ const Convoy: FC<Props> = ({ id }) => {
     selector.setSelectedWithNavEffect(convoy.id);
   };
   return (
-    <Box pos={'absolute'} top={convoy.pos.y} left={convoy.pos.x}>
+    <Box
+      // HACK: using inline styles to bypass chakra trying to create styles in the html head which seems to cause laggy animation. Though sometimes it's still laggy with this approach.
+      style={{
+        top: `${convoy.pos.y}px`,
+        left: `${convoy.pos.x}px`,
+        position: 'absolute',
+      }}
+    >
       <IconButton
         variant={'outline'}
         position={'relative'}

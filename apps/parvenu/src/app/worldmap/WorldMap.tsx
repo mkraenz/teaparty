@@ -63,10 +63,11 @@ const WorldMap: FC = () => {
         <Box
           style={{
             // backgroundImage: 'url("/patrician2-map.jpg")',
-            backgroundImage: 'url("/navmesh.png")',
+            // backgroundImage: 'url("/navmesh.png")',
+            backgroundImage: 'url("/navmesh-reverse-fill.png")',
             width: 639,
             height: 361,
-            filter: 'sepia(100%) saturate(500%)',
+            filter: 'sepia(100%) saturate(500%) brightness(50%)',
           }}
         />
         {world.citiesList.map((city) => {
