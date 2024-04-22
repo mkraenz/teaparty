@@ -34,4 +34,9 @@ export const cityData: { [cityName: string]: CityData } = {
     label: 'London',
     pos: { x: 45, y: 314 },
   },
+  Aalborg: {
+    id: 'Aalborg',
+    label: 'Aalborg',
+    pos: { x: 243, y: 150 },
+  },
 };

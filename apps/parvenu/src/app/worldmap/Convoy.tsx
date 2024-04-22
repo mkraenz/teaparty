@@ -19,6 +19,7 @@ const Convoy: FC<Props> = ({ id }) => {
   return (
     <Box pos={'absolute'} top={convoy.pos.y} left={convoy.pos.x}>
       <IconButton
+        variant={'outline'}
         position={'relative'}
         left={'-50%'}
         top={'-21px'}

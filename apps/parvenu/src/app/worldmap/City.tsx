@@ -27,7 +27,6 @@ const City: FC<Props> = ({ id, onContextMenu }) => {
         as={Link}
         to={`/cities/${city.id}`}
         onContextMenu={onContextMenu}
-        colorScheme="red"
         borderRadius={'50%'}
         borderWidth={1}
         h={2.5}

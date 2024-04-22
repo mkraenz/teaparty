@@ -1,4 +1,4 @@
-import { Heading } from '@chakra-ui/react';
+import { Box, Heading } from '@chakra-ui/react';
 import { FC, MouseEventHandler } from 'react';
 import { City as ICity } from '../../domain/city';
 import { useConvoySelector } from '../SelectionProvider';
@@ -52,17 +52,23 @@ const WorldMap: FC = () => {
   return (
     <div>
       <SpeedSettings />
-      <div
+      <Box
         style={{
-          backgroundImage: 'url("/patrician2-map.jpg")',
-          width: 639,
-          height: 361,
           position: 'relative',
           // zoom: 2 // FIXME: not working with mouse click position, but browser zoom works
         }}
         onClick={() => selection.setSelected('')}
         onContextMenu={setConvoyTargetLandOrWater}
       >
+        <Box
+          style={{
+            // backgroundImage: 'url("/patrician2-map.jpg")',
+            backgroundImage: 'url("/navmesh.png")',
+            width: 639,
+            height: 361,
+            filter: 'sepia(100%) saturate(500%)',
+          }}
+        />
         {world.citiesList.map((city) => {
           return (
             <City
@@ -75,7 +81,7 @@ const WorldMap: FC = () => {
         {world.convoysList.map((convoy) => (
           <Convoy key={convoy.id} id={convoy.id} />
         ))}
-      </div>
+      </Box>
       {selection.selectedConvoy && (
         <Heading>Selected Convoy {selection.selectedConvoy.label}</Heading>
       )}

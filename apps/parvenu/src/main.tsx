@@ -6,6 +6,7 @@ import App from './app/App';
 import { GameProvider } from './app/general/GameProvider';
 import { SettingsProvider } from './app/general/SettingsContext';
 import './global.css';
+import { theme } from './theme';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,7 +14,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <StrictMode>
     <BrowserRouter>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <GameProvider>
           <SettingsProvider>
             <App />
