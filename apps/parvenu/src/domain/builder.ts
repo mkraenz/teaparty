@@ -1,6 +1,7 @@
 import { CountingHouse } from './buildings/counting-house';
 import { GrainFarm } from './buildings/grain-farm';
 import { ProductionSystem } from './buildings/production.system';
+import { Shipyard } from './buildings/shipyard';
 import { WithProductionSystem } from './buildings/with-production-system.mixin';
 import { Woodcutter } from './buildings/woodcutter';
 import { Citizens } from './citizens';
@@ -45,6 +46,7 @@ const makeCity = (id: string, label: string, pos: Point, player: Player) => {
   tradingPost.setMerchant(player);
 
   return {
+    id,
     storage,
     citizens,
     treasury,
@@ -86,15 +88,20 @@ export const builder = () => {
       upkeepExempt: true,
     });
   const woodcutter = new PWoodCutter({
-    owner: 'Hamburg',
+    owner: hamburg.id,
     productionSystem: makeCityProductionSystem(),
   });
   const farm = new PGrainFarm({
-    owner: 'Hamburg',
+    owner: hamburg.id,
     productionSystem: makeCityProductionSystem(),
   });
   hamburg.city.build(woodcutter);
   hamburg.city.build(farm);
+
+  const shipyard = new Shipyard({
+    owner: hamburg.id,
+  });
+  hamburg.city.build(shipyard);
 
   cities.forEach((city) => city.storage.debugFill());
 

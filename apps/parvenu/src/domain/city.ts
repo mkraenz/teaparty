@@ -46,7 +46,7 @@ export class City {
   }
 
   passDay(currentDay: number) {
-    this.receiveMigrants(1); // TODO should be a function of the city's prosperity / wealth / citizens happiness
+    this.receiveMigrants(1); // FUTURE should be a function of the city's prosperity / wealth / citizens happiness
     this.employMigrants();
     this.produce();
     this.consumeAllResources();

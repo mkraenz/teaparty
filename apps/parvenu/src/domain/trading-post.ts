@@ -36,7 +36,7 @@ export class TradingPost {
     // quote = basePrice(type) * fn(how many days do the current stocks satisfy total consumption)
 
     const consumptionPerDay = this.citizens.getResourceConsumption(ware);
-    // TODO should we include the city-owned production building consumption?
+    // FUTURE should we include the city-owned production building consumption?
     const basePrice = waresData[ware].basePrice;
     const daysInAMonth = 30;
     const daysInAWeek = 7;
@@ -65,7 +65,7 @@ export class TradingPost {
 
   getQuoteForSellingToMerchant(ware: string, amountTraded: number = 1) {
     const consumptionPerDay = this.citizens.getResourceConsumption(ware);
-    // TODO should we include the city-owned production building consumption?
+    // FUTURE should we include the city-owned production building consumption?
     const basePrice = waresData[ware].basePrice;
     const daysInAMonth = 30;
     const daysInAWeek = 7;

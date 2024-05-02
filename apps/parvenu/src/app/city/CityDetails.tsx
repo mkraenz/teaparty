@@ -28,6 +28,7 @@ import {
 } from '@chakra-ui/react';
 import { isEmpty, toInteger } from 'lodash';
 import { FC, useEffect, useState } from 'react';
+import { FaHammer } from 'react-icons/fa';
 import {
   FiTrash,
   FiUserCheck,
@@ -41,10 +42,15 @@ import {
   isCountingHouse,
 } from '../../domain/buildings/counting-house';
 import { PGrainFarm } from '../../domain/buildings/grain-farm';
+import { Shipyard, isShipyard } from '../../domain/buildings/shipyard';
 import { hasProductionSystem } from '../../domain/buildings/with-production-system.mixin';
 import { City } from '../../domain/city';
+import { Navigator } from '../../domain/components/navigator';
 import { Convoy } from '../../domain/convoy';
 import { MasterBuilder } from '../../domain/master-builder';
+import { Player } from '../../domain/player';
+import { Ship } from '../../domain/ship';
+import { Storage } from '../../domain/storage';
 import SpeedSettings from '../common/SpeedSettings';
 import ToWorldmapButton from '../common/ToWorldmapButton';
 import { useCity, useWorld } from '../general/GameProvider';
@@ -376,6 +382,13 @@ export const CityDetails: FC = () => {
             {isCountingHouse(building) && (
               <CountingHouseTradeButton city={city} building={building} />
             )}
+            {isShipyard(building) && (
+              <BuildShipButton
+                city={city}
+                player={player}
+                building={building}
+              />
+            )}
           </ListItem>
         ))}
       </List>
@@ -383,13 +396,48 @@ export const CityDetails: FC = () => {
   );
 };
 
-const CountingHouseTradeButton = ({
-  city,
-  building,
-}: {
+const BuildShipButton: FC<{
+  building: Shipyard;
+  city: City;
+  player: Player;
+}> = ({ building, city, player }) => {
+  const world = useWorld();
+  const buildShip = () => {
+    const ship = new Ship({
+      owner: player.name,
+      cargoCapacity: 51,
+      upkeep: 150,
+      maxSpeed: 5,
+    });
+    const navigator = new Navigator();
+    const convoy = new Convoy({
+      owner: player.name,
+      label: 'My New Convoy',
+      pos: city.pos,
+      storage: new Storage('My New Convoy'),
+      treasury: player.treasury,
+      ships: [ship],
+      navigator,
+    });
+    navigator.setAgent(convoy);
+    world.addConvoy(convoy);
+    convoy.dock(city);
+  };
+  return (
+    <>
+      <IconButton
+        icon={<FaHammer />}
+        aria-label="Open counting house trade menu"
+        onClick={buildShip}
+      />
+    </>
+  );
+};
+
+const CountingHouseTradeButton: FC<{
   city: City;
   building: CountingHouse;
-}) => {
+}> = ({ city, building }) => {
   const tradingPostDialog = useDisclosure();
   return (
     <>

@@ -11,6 +11,16 @@ export const buildingData: Record<string, IBuilding> = {
       money: 1500,
     },
   },
+  shipyard: {
+    category: 'service',
+    type: 'shipyard',
+    unique: 'per-city',
+    upkeepCost: 0,
+    constructionCosts: {
+      needs: [{ ware: 'wood', amount: 20 }],
+      money: 15000,
+    },
+  },
   brewery: {
     category: 'production',
     type: 'brewery',
