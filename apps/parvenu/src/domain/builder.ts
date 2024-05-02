@@ -1,3 +1,4 @@
+import { ConstructionManager } from './buildings/ConstructionManager';
 import { CountingHouse } from './buildings/counting-house';
 import { GrainFarm } from './buildings/grain-farm';
 import { ProductionSystem } from './buildings/production.system';
@@ -97,9 +98,13 @@ export const builder = () => {
   hamburg.city.build(woodcutter);
   hamburg.city.build(farm);
 
+  const constructionManager = new ConstructionManager({
+    city: hamburg.city,
+  });
   const shipyard = new Shipyard({
     owner: hamburg.city.id,
     city: hamburg.city,
+    constructionManager,
   });
   hamburg.city.build(shipyard);
 

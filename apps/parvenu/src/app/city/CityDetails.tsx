@@ -37,6 +37,7 @@ import {
   FiUserX,
 } from 'react-icons/fi';
 import { Navigate, useParams } from 'react-router-dom';
+import { ConstructionManager } from '../../domain/buildings/ConstructionManager';
 import {
   CountingHouse,
   isCountingHouse,
@@ -274,11 +275,25 @@ export const CityDetails: FC = () => {
   const buildings = city.buildingsList;
 
   const canBuild = (buildingType: string) => {
-    const masterBuilder = new MasterBuilder({ city, merchant: player });
+    const constructionManager = new ConstructionManager({
+      city,
+    });
+    const masterBuilder = new MasterBuilder({
+      city,
+      merchant: player,
+      constructionManager,
+    });
     return masterBuilder.canBuild(buildingType);
   };
   const build = (buildingType: string) => {
-    const masterBuilder = new MasterBuilder({ city, merchant: player });
+    const constructionResourceChecker = new ConstructionManager({
+      city,
+    });
+    const masterBuilder = new MasterBuilder({
+      city,
+      merchant: player,
+      constructionManager: constructionResourceChecker,
+    });
     masterBuilder.build(buildingType);
   };
 

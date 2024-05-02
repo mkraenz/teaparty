@@ -1,4 +1,5 @@
 import { assert } from '../utils/utils';
+import { ConstructionManager, Merchant } from './buildings/ConstructionManager';
 import { Brewery } from './buildings/brewery';
 import { buildingData } from './buildings/building.data';
 import { CountingHouse } from './buildings/counting-house';
@@ -35,56 +36,38 @@ export class MasterBuilder {
     treasury: Treasury;
     name: string;
   };
+  private constructionManager: ConstructionManager;
 
   constructor(params: {
     city: City;
-    merchant: { treasury: Treasury; name: string };
+    merchant: Merchant;
+    constructionManager: ConstructionManager;
   }) {
     this.city = params.city;
     this.merchant = params.merchant;
+    this.constructionManager = params.constructionManager;
+    this.constructionManager.setMerchant(this.merchant);
   }
 
   build(buildingType: string) {
     const data = buildingData[buildingType];
-    if (this._canBuild(data)) {
+    if (this.constructionManager.canBuild(data)) {
       this.merchant.treasury.credit(data.constructionCosts.money);
       // construction costs get handed to the citizens, so not debiting the city treasury
-      this.takeResources(data.constructionCosts.needs);
+      this.constructionManager.takeResources(data.constructionCosts.needs);
       const building = this.makeBuilding(data);
       this.city.build(building);
     }
   }
 
-  private takeResources(needs: Need[]) {
-    const convoys = this.city.port.convoys;
-    const playerOwned = Object.values(convoys).filter(
-      (convoy) => convoy.owner === this.merchant.name
-    );
-    const countingHouse = this.city.getCountingHouse(this.merchant.name);
-
-    const resourcesInCountingHouse =
-      countingHouse?.storage.getAsAvailable(needs);
-    if (resourcesInCountingHouse)
-      countingHouse?.storage.consume(resourcesInCountingHouse);
-    let remainingNeeds = resourcesInCountingHouse
-      ? subtractNeedsOrZero(needs, resourcesInCountingHouse)
-      : needs;
-    for (const convoy of playerOwned) {
-      const resourcesInConvoy = convoy.storage.getAsAvailable(remainingNeeds);
-      convoy.storage.consume(resourcesInConvoy);
-      remainingNeeds = subtractNeedsOrZero(remainingNeeds, resourcesInConvoy);
-    }
-  }
-
   canBuild(buildingType: string) {
     const data = buildingData[buildingType];
+    const canBuildInGeneral = this.constructionManager.canBuild(data);
+    if (!canBuildInGeneral) return false;
     return this._canBuild(data);
   }
 
   private _canBuild(data: IBuilding) {
-    if (!this.merchant.treasury.hasEnough(data.constructionCosts.money))
-      return false;
-
     const buildingAlreadyExists = this.city.buildingsList.some(
       (building) =>
         building.type === data.type && building.ownedBy(this.merchant.name)
@@ -94,30 +77,7 @@ export class MasterBuilder {
 
     // TODO handle unique === 'per-city'
 
-    const convoys = this.city.port.convoys;
-    const playerOwnedConvoys = Object.values(convoys).filter(
-      (convoy) => convoy.owner === this.merchant.name
-    );
-    const needs = data.constructionCosts.needs;
-    const countingHouse = this.city.buildingsList.filter(
-      (building) =>
-        building.type === 'countingHouse' &&
-        building.owner === this.merchant.name
-    )[0] as CountingHouse | undefined;
-
-    const resourcesInCountingHouse =
-      countingHouse?.storage.getAsAvailable(needs);
-    let remainingNeeds = resourcesInCountingHouse
-      ? subtractNeedsOrZero(needs, resourcesInCountingHouse)
-      : needs;
-    for (const convoy of playerOwnedConvoys) {
-      const resourcesInConvoy = convoy.storage.getAsAvailable(remainingNeeds);
-      remainingNeeds = subtractNeedsOrZero(remainingNeeds, resourcesInConvoy);
-    }
-    const allResourceNeedsFulfilled = remainingNeeds.every(
-      (need) => need.amount === 0
-    );
-    return allResourceNeedsFulfilled;
+    return true;
   }
 
   private makeBuilding(data: IBuilding) {
