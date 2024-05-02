@@ -37,3 +37,11 @@ type IProductionBuilding = {
   wagesPerWorkerPerDay: number;
 } & BaseBuilding;
 export type IBuilding = IProductionBuilding | IServiceBuilding;
+
+export type IShip = {
+  type: string;
+  upkeep: number;
+  cargoCapacity: number;
+  maxSpeed: number;
+  constructionCosts: ConstructionCosts;
+};

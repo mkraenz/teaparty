@@ -92,8 +92,10 @@ export class MasterBuilder {
     if (data.unique === 'per-city-per-merchant' && buildingAlreadyExists)
       return false;
 
+    // TODO handle unique === 'per-city'
+
     const convoys = this.city.port.convoys;
-    const playerOwned = Object.values(convoys).filter(
+    const playerOwnedConvoys = Object.values(convoys).filter(
       (convoy) => convoy.owner === this.merchant.name
     );
     const needs = data.constructionCosts.needs;
@@ -108,7 +110,7 @@ export class MasterBuilder {
     let remainingNeeds = resourcesInCountingHouse
       ? subtractNeedsOrZero(needs, resourcesInCountingHouse)
       : needs;
-    for (const convoy of playerOwned) {
+    for (const convoy of playerOwnedConvoys) {
       const resourcesInConvoy = convoy.storage.getAsAvailable(remainingNeeds);
       remainingNeeds = subtractNeedsOrZero(remainingNeeds, resourcesInConvoy);
     }
@@ -121,7 +123,6 @@ export class MasterBuilder {
   private makeBuilding(data: IBuilding) {
     const type = data.type;
     if (data.category === 'production' && type in buildingTypeToClass) {
-      debugger;
       const countingHouse = this.city.getCountingHouse(this.merchant.name);
       if (!countingHouse)
         throw new Error(

@@ -46,7 +46,6 @@ const makeCity = (id: string, label: string, pos: Point, player: Player) => {
   tradingPost.setMerchant(player);
 
   return {
-    id,
     storage,
     citizens,
     treasury,
@@ -88,18 +87,19 @@ export const builder = () => {
       upkeepExempt: true,
     });
   const woodcutter = new PWoodCutter({
-    owner: hamburg.id,
+    owner: hamburg.city.id,
     productionSystem: makeCityProductionSystem(),
   });
   const farm = new PGrainFarm({
-    owner: hamburg.id,
+    owner: hamburg.city.id,
     productionSystem: makeCityProductionSystem(),
   });
   hamburg.city.build(woodcutter);
   hamburg.city.build(farm);
 
   const shipyard = new Shipyard({
-    owner: hamburg.id,
+    owner: hamburg.city.id,
+    city: hamburg.city,
   });
   hamburg.city.build(shipyard);
 

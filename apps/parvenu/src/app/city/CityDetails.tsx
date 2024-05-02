@@ -45,12 +45,9 @@ import { PGrainFarm } from '../../domain/buildings/grain-farm';
 import { Shipyard, isShipyard } from '../../domain/buildings/shipyard';
 import { hasProductionSystem } from '../../domain/buildings/with-production-system.mixin';
 import { City } from '../../domain/city';
-import { Navigator } from '../../domain/components/navigator';
 import { Convoy } from '../../domain/convoy';
 import { MasterBuilder } from '../../domain/master-builder';
 import { Player } from '../../domain/player';
-import { Ship } from '../../domain/ship';
-import { Storage } from '../../domain/storage';
 import SpeedSettings from '../common/SpeedSettings';
 import ToWorldmapButton from '../common/ToWorldmapButton';
 import { useCity, useWorld } from '../general/GameProvider';
@@ -400,28 +397,14 @@ const BuildShipButton: FC<{
   building: Shipyard;
   city: City;
   player: Player;
-}> = ({ building, city, player }) => {
+}> = ({ building, player }) => {
   const world = useWorld();
   const buildShip = () => {
-    const ship = new Ship({
-      owner: player.name,
-      cargoCapacity: 51,
-      upkeep: 150,
-      maxSpeed: 5,
-    });
-    const navigator = new Navigator();
-    const convoy = new Convoy({
-      owner: player.name,
-      label: 'My New Convoy',
-      pos: city.pos,
-      storage: new Storage('My New Convoy'),
-      treasury: player.treasury,
-      ships: [ship],
-      navigator,
-    });
-    navigator.setAgent(convoy);
+    building.setMerchant(player);
+    const convoy = building.buildShip('sloop', 'My Super Sloop');
+    building.clearMerchant();
+    if (!convoy) return;
     world.addConvoy(convoy);
-    convoy.dock(city);
   };
   return (
     <>
