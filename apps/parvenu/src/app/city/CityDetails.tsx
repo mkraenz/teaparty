@@ -29,6 +29,7 @@ import { BuildShipButton } from './BuildShipButton';
 import { CountingHouseTradeButton } from './CountingHouseTradeButton';
 import { Port } from './Port';
 import { CitizenDetails } from './CitizenDetails';
+import DetailsPage from '../common/DetailsPage';
 
 export const CityDetails: FC = () => {
   const world = useWorld();
@@ -65,7 +66,7 @@ export const CityDetails: FC = () => {
   };
 
   return (
-    <div>
+    <DetailsPage>
       <ToWorldmapButton />
       <SpeedSettings />
 
@@ -171,7 +172,7 @@ export const CityDetails: FC = () => {
           </ListItem>
         ))}
       </List>
-    </div>
+    </DetailsPage>
   );
 };
 

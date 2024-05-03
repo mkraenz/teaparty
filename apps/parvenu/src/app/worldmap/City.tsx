@@ -1,4 +1,4 @@
-import { Button, Text, VStack } from '@chakra-ui/react';
+import { Button, Text, Tooltip, VStack } from '@chakra-ui/react';
 import { FC, MouseEventHandler } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useCity } from '../general/GameProvider';
@@ -19,24 +19,23 @@ const City: FC<Props> = ({ id, onContextMenu }) => {
       left={`${city.pos.x}px`}
       gap={0}
     >
-      <Button
-        position={'relative'}
-        left={'-50%'}
-        top={'-50%'}
-        aria-label={city.label}
-        as={Link}
-        to={`/cities/${city.id}`}
-        onContextMenu={onContextMenu}
-        borderRadius={'50%'}
-        borderWidth={1}
-        h={2.5}
-        w={2.5}
-        minW={2.5}
-        p={0}
-      />
-      <Text position={'relative'} left={'-50%'} top={'-50%'}>
-        {city.label}
-      </Text>
+      <Tooltip label={city.label}>
+        <Button
+          position={'relative'}
+          left={'-50%'}
+          top={'-50%'}
+          aria-label={city.label}
+          as={Link}
+          to={`/cities/${city.id}`}
+          onContextMenu={onContextMenu}
+          borderRadius={'50%'}
+          borderWidth={1}
+          h={2.5}
+          w={2.5}
+          minW={2.5}
+          p={0}
+        />
+      </Tooltip>
     </VStack>
   );
 };

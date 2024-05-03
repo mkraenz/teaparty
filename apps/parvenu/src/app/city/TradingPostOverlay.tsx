@@ -19,6 +19,7 @@ import { City } from '../../domain/city';
 import { Convoy } from '../../domain/convoy';
 import { TradingPostTable } from './TradingPostTable';
 import { TradingAmountSelector } from './TradingAmountSelector';
+import { useContextMenu } from '../hooks/useContextMenu';
 
 export const TradingPostOverlay: FC<{
   city: City;
@@ -27,10 +28,11 @@ export const TradingPostOverlay: FC<{
   onClose: VoidFunction;
 }> = ({ visible, onClose, city, merchant }) => {
   const [amountTraded, setAmountTraded] = useState(1);
+  const closeOnContextMenu = useContextMenu(onClose);
   return (
     <Modal isOpen={visible} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent maxWidth={'95%'}>
+      <ModalContent maxWidth={'95%'} onContextMenu={closeOnContextMenu}>
         <ModalHeader>
           {isCountingHouse(merchant) ? (
             <Text>

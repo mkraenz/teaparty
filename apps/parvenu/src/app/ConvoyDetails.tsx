@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import ToWorldmapButton from './common/ToWorldmapButton';
 import { useConvoy } from './general/GameProvider';
+import DetailsPage from './common/DetailsPage';
 
 const ConvoyDetails: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,7 +12,7 @@ const ConvoyDetails: FC = () => {
   if (!id || !convoy) return <Navigate to="/" />;
 
   return (
-    <div>
+    <DetailsPage>
       <ToWorldmapButton />
       <Heading>Convoy "{convoy.label}"</Heading>
       <Heading as="h2" size="md">
@@ -36,7 +37,7 @@ const ConvoyDetails: FC = () => {
             ))}
         </tbody>
       </Table>
-    </div>
+    </DetailsPage>
   );
 };
 

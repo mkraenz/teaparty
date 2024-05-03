@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const useNavigateToHomeOnEscape = () => {
+export const useEffectNavigateHomeOnEscape = () => {
   const nav = useNavigate();
   useEffect(() => {
     const navToHomeOnEsc = (event: KeyboardEvent) => {

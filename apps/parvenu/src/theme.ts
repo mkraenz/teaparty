@@ -19,19 +19,18 @@ const colors = {
     100: '#e6058d',
     50: '#ff059b',
   },
-  primaryFontColor: {
+  primaryFont: {
     // lightMode: 'brightPurple.900',
     // darkMode: 'brightPurple.100',
     lightMode: 'red',
-    darkMode: 'red',
+    darkMode: '#ff9ed8',
   },
-  secondaryFontColor: {
+  secondaryFont: {
     // lightMode: 'brightPurple.600',
     // darkMode: 'brightPurple.300',
     lightMode: 'red',
     darkMode: 'red',
   },
-  plainOldBlue: 'blue',
 };
 
 const outline = defineStyle({
@@ -41,11 +40,15 @@ const outline = defineStyle({
 
 export const buttonTheme = defineStyleConfig({
   variants: { outline },
+  baseStyle: {
+    color: 'primaryFont.darkMode',
+    textColor: 'primaryFont.darkMode',
+  },
 });
 export const tooltipTheme = defineStyleConfig({
   baseStyle: {
-    background: 'brightPurple.100',
-    color: '#ff9ed8',
+    background: mode('brightPurple.100', 'brightPurple.100'),
+    color: mode('primaryFont.lightMode', 'primaryFont.darkMode'),
     fontWeight: 700,
   },
 });
@@ -71,7 +74,7 @@ export const theme = extendTheme(
       global: (props: any) => ({
         body: {
           bg: mode('white', '#092327')(props),
-          color: mode('black', '#ff9ed8')(props),
+          color: mode('black', 'primaryFont.darkMode')(props),
           // textShadow: '2px 2px 0px rgba(0, 0, 0, 0.8)',
           textShadow: '#000 1px 0 6px',
         },

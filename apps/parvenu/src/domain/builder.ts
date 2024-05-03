@@ -123,6 +123,7 @@ export const builder = () => {
   });
   const navigator = new Navigator();
   const convoy = new Convoy({
+    id: '5369d427-dfae-4231-b16c-60b611e3e34e', // fixing this in order for page reloads to stay on /convoys/:id
     owner: player.name,
     label: 'Antti',
     pos: { x: 100, y: 100 },
@@ -140,6 +141,7 @@ export const builder = () => {
     sourceStorage: convoy.storage,
   });
   freightForwarder.transferFrom('wood', 60);
+  hamburg.city.build(countingHouse);
 
   const world = new World({
     player,
