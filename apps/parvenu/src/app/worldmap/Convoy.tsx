@@ -1,4 +1,4 @@
-import { Box, IconButton } from '@chakra-ui/react';
+import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 import { FC, MouseEventHandler } from 'react';
 import { MdSailing } from 'react-icons/md';
 import { useConvoySelector } from '../SelectionProvider';
@@ -25,17 +25,21 @@ const Convoy: FC<Props> = ({ id }) => {
         position: 'absolute',
       }}
     >
-      <IconButton
-        variant={'outline'}
-        position={'relative'}
-        left={'-50%'}
-        top={'-21px'}
-        onClick={handleSelect}
-        icon={<MdSailing />}
-        aria-label={convoy.label}
-        isActive={selector.selected === id}
-        backgroundColor={'transparent'}
-      />
+      <Tooltip
+        label={`${convoy.label} - ${convoy.usedCargoCapacity}/${convoy.totalCargoCapacity}`}
+      >
+        <IconButton
+          variant={'outline'}
+          position={'relative'}
+          left={'-50%'}
+          top={'-21px'}
+          onClick={handleSelect}
+          icon={<MdSailing />}
+          aria-label={convoy.label}
+          isActive={selector.selected === id}
+          backgroundColor={'transparent'}
+        />
+      </Tooltip>
     </Box>
   );
 };

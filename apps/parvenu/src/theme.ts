@@ -42,6 +42,13 @@ const outline = defineStyle({
 export const buttonTheme = defineStyleConfig({
   variants: { outline },
 });
+export const tooltipTheme = defineStyleConfig({
+  baseStyle: {
+    background: 'brightPurple.100',
+    color: '#ff9ed8',
+    fontWeight: 700,
+  },
+});
 
 export const theme = extendTheme(
   {
@@ -57,6 +64,7 @@ export const theme = extendTheme(
       defaultProps: {
         variant: 'base',
       },
+      Tooltip: tooltipTheme,
     },
     colors,
     styles: {
