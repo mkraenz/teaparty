@@ -30,7 +30,7 @@ type IServiceBuilding = {
   type: string;
 } & BaseBuilding;
 
-type IProductionBuilding = {
+export type IProductionBuilding = {
   category: 'production';
   products: { ware: string; amount: number }[];
   needs: { ware: string; amount: number }[];

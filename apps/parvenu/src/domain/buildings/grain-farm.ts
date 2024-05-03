@@ -1,3 +1,4 @@
+import { IProductionBuilding } from '../types';
 import { Building } from './building';
 import { buildingData } from './building.data';
 import { ProductionSystem } from './production.system';
@@ -12,7 +13,7 @@ export class GrainFarm extends Building {
     });
     this.productionSystem = params.productionSystem;
 
-    this.productionSystem.init(buildingData.grainFarm);
+    this.productionSystem.init(buildingData.grainFarm as IProductionBuilding);
   }
 
   save() {
