@@ -1,14 +1,7 @@
-import { MouseEventHandler, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useContextMenu } from './useContextMenu';
 
 export const useNavigateBack = () => {
   const nav = useNavigate();
-  return useCallback<MouseEventHandler>(
-    (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      nav('/');
-    },
-    [nav]
-  );
+  return useContextMenu(() => nav('/'));
 };

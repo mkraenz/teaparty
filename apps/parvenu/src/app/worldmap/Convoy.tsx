@@ -3,6 +3,7 @@ import { FC, MouseEventHandler } from 'react';
 import { MdSailing } from 'react-icons/md';
 import { useConvoySelector } from '../SelectionProvider';
 import { useConvoy } from '../general/GameProvider';
+import { useContextMenu } from '../hooks/useContextMenu';
 
 type Props = {
   id: string;
@@ -11,11 +12,11 @@ type Props = {
 const Convoy: FC<Props> = ({ id }) => {
   const convoy = useConvoy(id);
   const selector = useConvoySelector();
+  const handleSelect = useContextMenu(() => {
+    if (convoy) selector.setSelectedWithNavEffect(convoy.id);
+  });
+
   if (!convoy) return null;
-  const handleSelect: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.stopPropagation();
-    selector.setSelectedWithNavEffect(convoy.id);
-  };
   return (
     <Box
       // HACK: using inline styles to bypass chakra trying to create styles in the html head which seems to cause laggy animation. Though sometimes it's still laggy with this approach.
