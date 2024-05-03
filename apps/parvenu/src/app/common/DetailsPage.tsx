@@ -1,12 +1,12 @@
 import { Box } from '@chakra-ui/react';
 import { FC, PropsWithChildren } from 'react';
-import { useNavigateBack } from '../hooks/useNavigateHome';
+import { useNavigateBack } from '../hooks/useNavigateBack';
 
 const DetailsPage: FC<PropsWithChildren> = ({ children }) => {
-  const navHome = useNavigateBack();
+  const navBack = useNavigateBack();
 
   return (
-    <Box onContextMenu={navHome} h={'98vh'}>
+    <Box onContextMenu={navBack} h={'98vh'}>
       {children}
     </Box>
   );
