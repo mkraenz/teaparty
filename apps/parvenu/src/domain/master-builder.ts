@@ -68,14 +68,17 @@ export class MasterBuilder {
   }
 
   private _canBuild(data: IBuilding) {
-    const buildingAlreadyExists = this.city.buildingsList.some(
-      (building) =>
-        building.type === data.type && building.ownedBy(this.merchant.name)
+    const buildingsOfTypeInCity = this.city.buildingsList.filter(
+      (building) => building.type === data.type
     );
-    if (data.unique === 'per-city-per-merchant' && buildingAlreadyExists)
+    const ownedBuildingAlreadyExists = buildingsOfTypeInCity.some((building) =>
+      building.ownedBy(this.merchant.name)
+    );
+    if (data.unique === 'per-city' && buildingsOfTypeInCity) {
       return false;
-
-    // TODO handle unique === 'per-city'
+    }
+    if (data.unique === 'per-city-per-merchant' && ownedBuildingAlreadyExists)
+      return false;
 
     return true;
   }
