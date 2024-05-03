@@ -53,7 +53,6 @@ export class Shipyard extends Building {
       const ship = this.makeShip(data);
       const convoy = this.makeConvoy(ship, name); // FUTURE: this should return a ship first, and then it can be turned into a convoy
       convoy.dock(this.city);
-      // world.addConvoy(convoy); // TODO
       return convoy;
     }
   }
