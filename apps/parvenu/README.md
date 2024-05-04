@@ -30,3 +30,13 @@ We are relying on [Navigation Mesh](https://en.wikipedia.org/wiki/Navigation_mes
 - next, run `bake-navmesh-polygons.ts` from [repo](https://github.com/mkraenz/remove-margins-from-tilemap/) to generate the navigation mesh polygons.
 - Copy-paste the output file `navmesh-polygons.json` to `apps/parvenu/src/app/navmesh-polygons.json`. (command: `cp navmesh-polygons.json /home/mirco/programming/teaparty/apps/parvenu/src/app/navmesh-polygons.json`)
 - Check `apps/parvenu/src/app/PathFindingTest.tsx:36~38` for the usage of the navigation mesh.
+
+## Releases
+
+### To itch.io
+
+Actualy hosted at [parvenu-test.surge.sh](https://parvenu-test.surge.sh/).
+
+`pnpm exec nx deploy parvenu` (but only works on TypeScriptTeatime's computer because it has itch.io `butler` executable at the filepath).
+
+Because itch.io hosts the page on a random sub-path, things get complicated wrt to script file inclusion (and if that would work, probably more trouble with navigation). In either case, for that reason, I just use itchio to host a skeleton html with an iframe. The iframe points to the actual game hosted on surge.sh. On surge, it's just as you would expect a webapp to work.

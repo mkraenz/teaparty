@@ -5,6 +5,7 @@
   "projectType": "application",
   "targets": {
     "build": {
+      "dependsOn": ["clean"],
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
@@ -69,6 +70,21 @@
         "commands": ["tsc -p tsconfig.app.json --noEmit"],
         "cwd": "apps/parvenu",
         "forwardAllArgs": false
+      }
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["rm -rf dist/apps/parvenu"]
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "surge --project dist/apps/parvenu --domain parvenu-test.surge.sh"
+        ]
       }
     }
   },
